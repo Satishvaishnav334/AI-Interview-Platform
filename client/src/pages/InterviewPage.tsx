@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar3D from "@/components/general/Avatar3D"
 import Avatar3DVariant from "@/components/general/Avatar3DVariant"
+import axios from "axios";
 
 function InterviewPage() {
 
@@ -22,7 +23,7 @@ function InterviewPage() {
   const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer } = useInterviewStore()
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [resettingQuestion, setResettingQuestion] = useState(false);
+  const [resettingQuestion, setResettingQuestion] = useState(true);
 
   const navigate = useNavigate()
   const { transcript } = useAutoSpeechRecognizer(currentQuestionIndex);
@@ -62,6 +63,7 @@ function InterviewPage() {
   }, [candidate]);
 
   const handleInterviewEnd = async () => {
+    setResettingQuestion(true)
     socket.emit("interview-complete", {})
 
     if (!candidate || !questionAnswerSets) return
@@ -101,7 +103,7 @@ function InterviewPage() {
       updateAnswer(transcript, currentQuestionIndex);
 
       if (selectRoundAndTimeLimit(currentQuestionIndex + 1).round === "end") {
-        toast({ title: "You have reached the end of the interview" });
+        toast({ title: "You have reached the end of the interview", variant: "destructive" });
         handleInterviewEnd()
         return;
       }
@@ -109,7 +111,7 @@ function InterviewPage() {
       const newGeneratedQuestion = await getQuestion(transcript, currentQuestionIndex + 1);
 
       if (!newGeneratedQuestion) {
-        toast({ title: "Something went wrong while generating question" });
+        toast({ title: "Something went wrong while generating question", variant: "destructive" });
         return;
       }
 
@@ -145,6 +147,7 @@ function InterviewPage() {
         addQuestionAnswerSet({ question: text, answer: "", round: "technical", timeLimit: 180 });
         socket.emit("initial-setup", candidate)
         socket.emit("initialize-new-question", { question: text, round: "technical", timeLimit: 180 })
+        setResettingQuestion(false)
       }
     }
     initialSetup()
@@ -163,11 +166,25 @@ function InterviewPage() {
       setSocketId(socket.id || "");
     };
 
-    const handleInterviewAnalyticsData = () => {
+    const handleInterviewAnalyticsData = async () => {
+      try {
 
-      navigate(`/interview/${socket.id}/feedback`)
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/sessions`, {
+          socketId: socket.id
+        })
 
-      // TODO: call API that will store all collected data in database
+        if (res.status !== 200) {
+          toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+          return
+        }
+
+        navigate(`/interview/${socket.id}/feedback`)
+      } catch (error) {
+        console.log(error)
+        toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+      } finally {
+        setResettingQuestion(false)
+      }
     }
 
     const handleDisconnect = () => {
@@ -217,7 +234,7 @@ function InterviewPage() {
         <h3>Interview Analysis</h3>
         <div className="flex space-x-2 items-center">
           <Timer currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
-          <Button variant="secondary" onClick={handleResetQuestion}>Skip time</Button>
+          <Button variant="secondary" onClick={handleResetQuestion}>Next question</Button>
           <Dialog>
             <DialogTrigger>
               <span className="bg-red-500 text-zinc-100 font-semibold rounded-md py-2 px-4">Leave</span>
@@ -246,10 +263,17 @@ function InterviewPage() {
       {selectRoundAndTimeLimit(currentQuestionIndex).round === "technical" ?
         <div className="p-4 rounded-md grid grid-cols-9 gap-4">
           <div className="col-span-7 h-[80vh]">
-            <div className="h-20 px-20 font-semibold bg-blue-200 text-zinc-900 rounded-lg mb-2 overflow-auto py-1 z-10 ">
-              <p className="">
-                {questionAnswerSets && questionAnswerSets[currentQuestionIndex]?.question || "No question found"}
-              </p>
+            <div className="min-h-16 px-6 font-semibold bg-blue-200 text-zinc-900 rounded-lg mb-2 overflow-auto py-2 z-10">
+              {resettingQuestion ?
+                <div className="flex flex-col space-y-1">
+                  <p className="animate-pulse w-full h-5 bg-zinc-800 rounded"></p>
+                  <p className="animate-pulse w-9/12 h-5 bg-zinc-800 rounded"></p>
+                </div>
+                :
+                <p className="">
+                  {questionAnswerSets && questionAnswerSets[currentQuestionIndex]?.question || "No question found"}
+                </p>
+              }
             </div>
             <CodeEditor />
           </div>
@@ -274,10 +298,17 @@ function InterviewPage() {
         </div>
         :
         <div className="min-h-[80vh] space-x-2">
-          <div className="h-20 px-20 font-semibold overflow-auto py-1 z-10 ">
-            <p className="text-xl">
-              {questionAnswerSets && questionAnswerSets[currentQuestionIndex]?.question || "No question found"}
-            </p>
+          <div className="min-h-16 px-6 font-semibold bg-blue-200 text-zinc-900 rounded-lg mb-2 overflow-auto py-2 z-10">
+            {resettingQuestion ?
+              <div className="flex flex-col space-y-1">
+                <p className="animate-pulse w-full h-5 bg-zinc-800 rounded"></p>
+                <p className="animate-pulse w-9/12 h-5 bg-zinc-800 rounded"></p>
+              </div>
+              :
+              <p className="">
+                {questionAnswerSets && questionAnswerSets[currentQuestionIndex]?.question || "No question found"}
+              </p>
+            }
           </div>
           <div className="flex justify-center items-center">
             <Avatar3DVariant
@@ -301,6 +332,10 @@ function InterviewPage() {
           </div>
         </div>
       }
+      {resettingQuestion &&
+        <div className="fixed top-16 left-0 w-full h-[0.300rem] loading-bar-container overflow-hidden">
+          <div className="loading-bar h-[0.300rem] w-full bg-gradient-to-r to-blue-600 from-purple-700"></div>
+        </div>}
     </div >
   );
 }
