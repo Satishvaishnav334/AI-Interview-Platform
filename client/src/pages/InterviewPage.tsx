@@ -271,16 +271,17 @@ function InterviewPage() {
             <Webcam height={480} width={480} videoHeight={580} videoWidth={580} questionAnswerIndex={currentQuestionIndex} />
             {/* transcript chatbox */}
             {transcript && (
-              <div className="mt-2 text-sm rounded-xl bg-blue-400 italic text-gray-400 dark:text-gray-400">
+              <div className="mt-2 text-sm rounded-xl bg-blue-800 italic text-gray-400 dark:text-gray-400">
                 {[...transcript
                   .split(/\r?\n/)
                   .filter(line => line.trim() !== "")
                   .reverse()]
-                  .slice(0, 2)
+                  .slice(1, 2)
                   .reverse()
                   .map((line, index) => (
                     <p key={index}>{line}</p>
                   ))}
+                  <SpeechRecognition/>
               </div>
             )}
           </div>
