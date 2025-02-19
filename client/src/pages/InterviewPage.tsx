@@ -8,7 +8,7 @@ import { useAutoSpeechRecognizer } from "@/hooks/useAutoSpeechRecognizer";
 import useSocket from "@/socket/useSocket";
 import useInterviewStore from "@/store/interviewStore";
 import useSocketStore from "@/store/socketStore";
-import { generateNextQuestion } from "@/utils/handleQuestionAnswer";
+import { candidateDetailsType, generateFeedback, generateNextQuestion } from "@/utils/handleQuestionAnswer";
 import selectRoundAndTimeLimit from "@/utils/selectRoundAndTimeLimit";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -64,10 +64,23 @@ function InterviewPage() {
   const handleInterviewEnd = async () => {
     socket.emit("interview-complete", {})
 
-    // TODO: api calls
+    if (!candidate || !questionAnswerSets) return
 
-    navigate(`/interview/${socket.id}/feedback`)
+    const userData: candidateDetailsType = {
+      candidateName: candidate.name,
+      jobRole: candidate.jobRole,
+      skills: candidate.skills,
+      yearsOfExperience: candidate.yearsOfExperience,
+    }
 
+    const feedback = await generateFeedback(userData, questionAnswerSets)
+
+    if (!feedback) {
+      toast({ title: "Something went wrong while evaluating the question" })
+      return
+    }
+
+    socket.emit("interview-evaluation", feedback)
   }
 
   // main function to reset the question
@@ -151,7 +164,9 @@ function InterviewPage() {
     };
 
     const handleInterviewAnalyticsData = () => {
-      // TODO: redirect user to analytics page and show it
+
+      navigate(`/interview/${socket.id}/feedback`)
+
       // TODO: call API that will store all collected data in database
     }
 

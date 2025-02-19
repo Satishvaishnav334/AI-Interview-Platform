@@ -12,15 +12,18 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
 
-type candidateDetailsType = {
+export type candidateDetailsType = {
   yearsOfExperience: number;
   candidateName: string | null;
   jobRole: string;
   skills: string[];
+};
+
+export type candidateAnswerDetailType = {
   round: RoundType;
   timeLimit: number;
   previousAnswer: string;
-};
+} & candidateDetailsType;
 
 const getBasePromptForNextQuestion = ({
   yearsOfExperience,
@@ -30,7 +33,7 @@ const getBasePromptForNextQuestion = ({
   round,
   timeLimit,
   previousAnswer,
-}: candidateDetailsType) => {
+}: candidateAnswerDetailType) => {
   return `
 You are an AI-powered interviewer conducting a professional coding and technical interview. Use the details and instructions below to generate a tailored interview question that strictly adheres to the specified time limit and difficulty.
 
@@ -110,7 +113,7 @@ For wrong questions provide an array in the following structure.
 };
 
 export async function generateNextQuestion(
-  candidateDetails: candidateDetailsType
+  candidateDetails: candidateAnswerDetailType
 ): Promise<string | null> {
   try {
     const basePrompt = getBasePromptForNextQuestion(candidateDetails);

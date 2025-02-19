@@ -44,6 +44,8 @@ type RoundType = "aptitude" | "technical" | "behavioral" | "system-design";
 type QuestionSchema = {
   question: string;
   answer: string;
+  answerReview: string;
+  score: number;
   timeLimit: number;
   round: RoundType;
   startTime: number;
@@ -177,14 +179,10 @@ io.on("connection", (socket) => {
         [key: string]: any[];
       }[] = [];
       await data?.questions.map((question) => {
-        console.log(question);
         if (!question.faceExpressions.length) return {};
         const faceData = processFaceData(question.faceExpressions);
         faceExpressionPoints.push(faceData);
       });
-      faceExpressionPoints.map((item) => {
-        console.log(item);
-      })
       return data;
     } catch (error) {
       throw error;
@@ -208,6 +206,8 @@ io.on("connection", (socket) => {
         const newQuestion: QuestionSchema = {
           question: data.question || "",
           answer: data.answer || "",
+          answerReview: data.answerReview || "",
+          score: data.score || 0,
           timeLimit: data.timeLimit || 60,
           round: data.round || "aptitude",
           startTime: Date.now(),
@@ -275,6 +275,22 @@ io.on("connection", (socket) => {
       }
     }
   );
+  
+  // Store question answer evaluated data
+  socket.on("interview-evaluation", (feedback) => {
+    console.log(feedback)
+    try {
+      if (runningInterviewSession.has(socket.id)) {
+        const session = runningInterviewSession.get(socket.id);
+        if (!session) {
+          throw new Error("Session not found");
+        }
+        session.questions[feedback.questionAnswerIndex].answer = feedback.answer;
+      }
+    } catch (error) {
+      handleSocketError(socket, error);
+    }
+  })
 
   // Handle interview completion
   socket.on("interview-complete", async () => {
@@ -287,8 +303,23 @@ io.on("connection", (socket) => {
         session.endTime = Date.now();
         session.status = "completed";
 
-        const data = await processAnalyticsData();
+        const data: {
+          faceExpressions: any[] | string;
+          isError: boolean;
+        } = {
+          faceExpressions: [],
+          isError: false
+        };
 
+        const faceExpressionPoints = await processAnalyticsData();
+
+        if (faceExpressionPoints) {
+          data.faceExpressions = data.faceExpressions;
+        } else {
+          data.faceExpressions = "Error while processing data";
+          data.isError = false
+        }
+        
         socket.emit("interview-analytics", data);
       }
     } catch (error) {

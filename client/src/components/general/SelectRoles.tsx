@@ -25,7 +25,7 @@ function SelectRoles() {
 
   return (
     <div className="flex flex-col">
-      <h1 className="text-3xl font-bold my-4 rounded-xl py-1 h-15 w-fit text-left transition duration-300">
+      <h1 className="text-3xl font-bold mt-12 mb-4 rounded-xl py-1 h-15 w-fit text-left transition duration-300">
         Interview Option
       </h1>
 
@@ -34,7 +34,7 @@ function SelectRoles() {
         {roles.map((role, index) => (
           <Card 
             key={index}
-            className="dark:bg-[#212121] dark:text-neutral-300 p-6 cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-blue-100 dark:hover:bg-[#2a2a2a]"
+            className="dark:bg-zinc-800 dark:text-neutral-300 p-6 cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
             onClick={() => navigate("/interview")}
           >
             <CardHeader className="py-1 px-0">
@@ -48,7 +48,7 @@ function SelectRoles() {
         
         {/* Add More Roles Card */}
         <Card
-          className="dark:bg-[#212121] dark:text-neutral-300 py-10 flex items-center justify-center cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-blue-100 dark:hover:bg-[#2a2a2a]"
+          className="dark:bg-zinc-800 dark:text-neutral-300 py-10 flex items-center justify-center cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
           onClick={() => navigate("/bhai-roles page kaha hai")}
         >
           <CardContent className="flex p-0 items-center justify-center h-full">
