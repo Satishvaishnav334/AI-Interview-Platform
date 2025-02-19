@@ -60,7 +60,7 @@ function SessionInfoForm() {
         {jobRoleSchema.options.map((option) => (
           <DialogTrigger key={option} onClick={() => {
             form.setValue("jobRole", option);
-          }} className="bg-zinc-800 dark:bg-zinc-200 text-zinc-100 dark:text-zinc-900 rounded-md py-3 px-4">
+          }} className="bg-gradient-to-r from-zinc-800 to-zinc-800 dark:from-zinc-200 dark:to-zinc-200 text-zinc-100 dark:text-zinc-900 transition-all duration-100 ease-in-out hover:from-purple-500 hover:to-blue-500 dark:hover:from-purple-500 dark:hover:to-blue-500 hover:text-zinc-100 dark:hover:text-zinc-100 rounded-md py-3 px-4">
             {option}
           </DialogTrigger>
         ))}

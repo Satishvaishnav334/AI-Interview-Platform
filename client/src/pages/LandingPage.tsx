@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { FaVideo, FaCode, FaChartBar, FaUsers, FaComments } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function LandingPage() {
   return (
@@ -8,7 +8,7 @@ export default function LandingPage() {
       <header className="text-center py-20 w-full max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">AI Interview Platform</h1>
         <p className="mt-4 text-xl text-gray-700 dark:text-gray-300">Enhance your interview preparation with AI-powered features.</p>
-        <Button className="mt-6 px-6 py-3 text-lg bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 transition-all duration-300 text-white">Get Started</Button>
+        <Link to="/dashboard" className="mt-6 px-6 block w-fit mx-auto rounded-xl py-3 text-lg bg-gradient-to-r from-blue-500 to-purple-500 hover:from-purple-500 hover:to-blue-500 transition-all duration-300 text-white">Get Started</Link>
       </header>
       
       <section className="grid md:grid-cols-3 gap-6 mt-8 max-w-5xl mx-auto p-4">
