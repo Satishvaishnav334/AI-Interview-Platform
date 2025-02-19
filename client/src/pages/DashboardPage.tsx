@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 function DashboardPage() {
   return (
     <div className="h-full w-screen overflow-x-hidden py-12 space-y-6">
-      <div className="w-1/2 mx-auto my-2 py-2 rounded-xl bg-blue-300 flex justify-center items-center">
-        <p className="text-zinc-600"><Link to="/dashboard/form" className="text-zinc-900 font-semibold hover:underline">Visit form</Link> to get started</p>
+      <div className="w-1/2 mx-auto my-2 py-2 rounded-xl bg-gradient-to-r to-blue-700 from-purple-800 flex justify-center items-center">
+        <p className="text-zinc-300 font-semibold"><Link to="/dashboard/form" className="text-zinc-100 font-semibold hover:underline">Visit form</Link> to get started</p>
       </div>
       <SessionInfoForm />
       <Container>

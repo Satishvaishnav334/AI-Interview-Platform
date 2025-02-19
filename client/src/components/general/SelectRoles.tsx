@@ -41,7 +41,7 @@ function SelectRoles() {
               <CardTitle className="text-2xl font-medium">{role.title}</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <p className="text-gray-400 text-sm">{role.description}</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">{role.description}</p>
             </CardContent>
           </Card>
         ))}

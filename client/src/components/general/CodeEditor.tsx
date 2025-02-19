@@ -72,7 +72,7 @@ function CodeEditor() {
             <Editor
                 height="100%"
                 width="100%"
-                theme={profile ? "vs" :"vs-dark"}
+                theme={profile ? "vs" : "vs-dark"}
                 value={value}
                 onMount={onMountHandler}
                 onChange={(e: string | undefined) => {

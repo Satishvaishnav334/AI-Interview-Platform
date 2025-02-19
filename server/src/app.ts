@@ -80,6 +80,64 @@ const handleSocketError = (socket: any, error: any) => {
   });
 };
 
+function processFaceData(dataPoints: FaceExpression[]) {
+  if (!dataPoints.length) return {};
+
+  // Sort the data in case it's not already sorted
+  dataPoints.sort(
+    (a: FaceExpression, b: FaceExpression) => a.timeStamp - b.timeStamp
+  );
+
+  // Initialize the segments object for desired expression types
+  const segments: { [key: string]: any[] } = {
+    sad: [],
+    neutral: [],
+    excited: [],
+  };
+
+  // Start with the first data point
+  let currentSegment = {
+    expression: dataPoints[0].expressionState,
+    startTime: new Date(dataPoints[0].timeStamp),
+    endTime: new Date(dataPoints[0].timeStamp),
+  };
+
+  // Process the rest of the data
+  for (let i = 1; i < dataPoints.length; i++) {
+    const dataPoint = dataPoints[i];
+    const currentTimestamp = new Date(dataPoint.timeStamp);
+
+    if (dataPoint.expressionState === currentSegment.expression) {
+      // Extend the current segment's end time
+      currentSegment.endTime = currentTimestamp;
+    } else {
+      // If the current segment's expression is one we're tracking, add it to segments
+      if (segments[currentSegment.expression]) {
+        segments[currentSegment.expression].push({
+          startTime: currentSegment.startTime,
+          endTime: currentSegment.endTime,
+        });
+      }
+      // Start a new segment with the new expression
+      currentSegment = {
+        expression: dataPoint.expressionState,
+        startTime: currentTimestamp,
+        endTime: currentTimestamp,
+      };
+    }
+  }
+
+  // Push the last segment
+  if (segments[currentSegment.expression]) {
+    segments[currentSegment.expression].push({
+      startTime: currentSegment.startTime,
+      endTime: currentSegment.endTime,
+    });
+  }
+
+  return segments;
+}
+
 io.on("connection", (socket) => {
   console.log(`User connected: ${socket.id}`);
 
@@ -112,13 +170,26 @@ io.on("connection", (socket) => {
     }
   });
 
-  const processAnalyticsData = () => {
+  const processAnalyticsData = async () => {
     try {
-      
+      const data = runningInterviewSession.get(socket.id);
+      const faceExpressionPoints: {
+        [key: string]: any[];
+      }[] = [];
+      await data?.questions.map((question) => {
+        console.log(question);
+        if (!question.faceExpressions.length) return {};
+        const faceData = processFaceData(question.faceExpressions);
+        faceExpressionPoints.push(faceData);
+      });
+      faceExpressionPoints.map((item) => {
+        console.log(item);
+      })
+      return data;
     } catch (error) {
-      throw error
+      throw error;
     }
-  }
+  };
 
   // Add new question
   socket.on("initialize-new-question", (data) => {
@@ -181,7 +252,7 @@ io.on("connection", (socket) => {
   // Store face expression data
   socket.on(
     "face-expression-data",
-    ({ expressionData, timeStamp, questionAnswerIndex }) => {
+    ({ expressionState, timeStamp, questionAnswerIndex }) => {
       try {
         if (runningInterviewSession.has(socket.id)) {
           const session = runningInterviewSession.get(socket.id);
@@ -193,7 +264,7 @@ io.on("connection", (socket) => {
           if (question) {
             question.faceExpressions.push({
               timeStamp,
-              ...expressionData,
+              expressionState,
             });
           } else {
             console.warn(`Invalid question index: ${questionAnswerIndex}`);
@@ -206,7 +277,7 @@ io.on("connection", (socket) => {
   );
 
   // Handle interview completion
-  socket.on("interview-complete", () => {
+  socket.on("interview-complete", async () => {
     try {
       if (runningInterviewSession.has(socket.id)) {
         const session = runningInterviewSession.get(socket.id);
@@ -216,7 +287,9 @@ io.on("connection", (socket) => {
         session.endTime = Date.now();
         session.status = "completed";
 
-        socket.emit("interview-analytics", processAnalyticsData);
+        const data = await processAnalyticsData();
+
+        socket.emit("interview-analytics", data);
       }
     } catch (error) {
       handleSocketError(socket, error);
