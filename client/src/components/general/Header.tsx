@@ -27,7 +27,7 @@ function Header() {
               key={to}
               to={to}
               className={({ isActive }) =>
-                `font-semibold ${isActive ? "text-zinc-950 dark:text-zinc-100" : "text-gray-500 dark:text-zinc-600"}`
+                `font-semibold ${isActive ? "text-zinc-950 dark:text-zinc-100" : "text-gray-600 dark:text-zinc-500"}`
               }
             >
               {label}

@@ -75,13 +75,15 @@ function InterviewPage() {
       yearsOfExperience: candidate.yearsOfExperience,
     }
 
-    const feedback = await generateFeedback(userData, questionAnswerSets)
+    let feedback = await generateFeedback(userData, questionAnswerSets)
 
     if (!feedback) {
       toast({ title: "Something went wrong while evaluating the question" })
       return
     }
 
+    feedback = JSON.parse(feedback)
+    
     socket.emit("interview-evaluation", feedback)
   }
 
@@ -233,8 +235,8 @@ function InterviewPage() {
       <div className="flex items-center justify-between border-b-2 border-zinc-300 dark:border-zinc-700 px-24 h-16">
         <h3>Interview Analysis</h3>
         <div className="flex space-x-2 items-center">
-          <Timer currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
-          <Button variant="secondary" onClick={handleResetQuestion}>Next question</Button>
+          <Timer loadingNextQuestion={resettingQuestion} currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
+          <Button disabled={resettingQuestion} variant="secondary" onClick={handleResetQuestion}>Next question</Button>
           <Dialog>
             <DialogTrigger>
               <span className="bg-red-500 text-zinc-100 font-semibold rounded-md py-2 px-4">Leave</span>
