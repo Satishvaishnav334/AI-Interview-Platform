@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 
 const MAX_STREAK = 10; // Maximum streak count for a full circle
 
@@ -76,9 +75,7 @@ const StreakCircle: React.FC = () => {
                     <span className="absolute text-3xl font-bold text-[#f59e0b] ">{streak}</span>
                 </div>
 
-                <Button onClick={increaseStreak} className="mt-4 w-full bg-blue-500 hover:bg-blue-400">
-                    Streaks
-                </Button>
+                
             </CardContent>
         </Card>
     );

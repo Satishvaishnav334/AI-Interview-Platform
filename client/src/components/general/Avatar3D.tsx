@@ -57,7 +57,7 @@ export default function ModelViewer({ text }: { text: string }) {
   useEffect(() => {
     if (text !== "No question found" && text !== spokenText) {
       if (speechTimeoutRef.current) clearTimeout(speechTimeoutRef.current);
-      speechTimeoutRef.current = window.setTimeout(() => speak(text), 4000);
+      speechTimeoutRef.current = window.setTimeout(() => speak(text), 1000);
     }
     return () => {
       if (speechTimeoutRef.current) clearTimeout(speechTimeoutRef.current);
