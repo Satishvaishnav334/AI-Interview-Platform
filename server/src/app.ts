@@ -44,6 +44,7 @@ type RoundType = "aptitude" | "technical" | "behavioral" | "system-design";
 type QuestionSchema = {
   question: string;
   answer: string;
+  code?: { code: string; language: string }[];
   answerReview: string;
   correctAnswer: string;
   score: number;
@@ -207,6 +208,7 @@ io.on("connection", (socket) => {
         const newQuestion: QuestionSchema = {
           question: data.question || "",
           answer: data.answer || "",
+          code: data.code || [],
           answerReview: data.answerReview || "",
           score: data.score || 0,
           correctAnswer: data.correctAnswer || "",

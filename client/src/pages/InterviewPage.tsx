@@ -20,7 +20,7 @@ function InterviewPage() {
 
   const socket = useSocket()
   const { setSocketId } = useSocketStore()
-  const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer } = useInterviewStore()
+  const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer, addCodeAttempt } = useInterviewStore()
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [resettingQuestion, setResettingQuestion] = useState(true);
@@ -77,18 +77,18 @@ function InterviewPage() {
 
     try {
       let feedback = await generateFeedback(userData, questionAnswerSets)
-  
+
       if (!feedback) {
         toast({ title: "Something went wrong while evaluating the question" })
         return
       }
-  
-      if(feedback.includes("```json")) {
+
+      if (feedback.includes("```json")) {
         feedback = feedback.replace("```json", "").replace("```", "")
       }
-  
+
       feedback = JSON.parse(feedback)
-      
+
       socket.emit("interview-evaluation", feedback)
     } catch (error) {
       toast({ title: "Something went wrong while evaluating the question" })
@@ -106,10 +106,18 @@ function InterviewPage() {
 
     try {
 
-      socket.emit("update-question-data", {
-        questionAnswerIndex: currentQuestionIndex,
-        answer: transcript,
-      });
+      if (selectRoundAndTimeLimit(currentQuestionIndex).round === "technical") {
+        socket.emit("update-question-data", {
+          questionAnswerIndex: currentQuestionIndex,
+          answer: transcript,
+          code: questionAnswerSets[currentQuestionIndex].code,
+        });
+      } else {
+        socket.emit("update-question-data", {
+          questionAnswerIndex: currentQuestionIndex,
+          answer: transcript,
+        });
+      }
 
       updateAnswer(transcript, currentQuestionIndex);
 
@@ -286,7 +294,9 @@ function InterviewPage() {
                 </p>
               }
             </div>
-            <CodeEditor />
+            <CodeEditor addCompileAttempt={({ code, language }: { code: string, language: string }) => {
+              addCodeAttempt(code, language, currentQuestionIndex)
+            }} />
           </div>
           <div className="col-span-2 space-y-1 p-2">
             <Avatar3D text={questionAnswerSets && questionAnswerSets[currentQuestionIndex].question || "No question found"} />

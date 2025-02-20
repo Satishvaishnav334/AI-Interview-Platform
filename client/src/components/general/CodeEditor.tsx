@@ -14,7 +14,7 @@ interface CodeEditorProps {
     getValue: () => string;
 }
 
-function CodeEditor() {
+function CodeEditor({ addCompileAttempt }: { addCompileAttempt: ({ language, code }: { language: string, code: string }) => void }) {
     const editorRef = useRef<CodeEditorProps | null>(null);
     const [value, setValue] = useState<string>('');
     const [isTerminalOpen, setIsTerminalOpen] = useState(false);
@@ -35,6 +35,10 @@ function CodeEditor() {
             const { run: result } = await ExecuteCode(language, sourceCode);
             setOutput(result.output);
             setIsError(result.stderr ? true : false);
+            addCompileAttempt({
+                language: language,
+                code: sourceCode,
+            })
         } catch (error) {
             console.error('Error executing code:', error ? error : error);
             toast({
