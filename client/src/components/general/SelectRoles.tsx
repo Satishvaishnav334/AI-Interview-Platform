@@ -11,12 +11,12 @@ const roles = [
   {
     title: "Backend Developer",
     description:
-      "A MERN Stack Developer must have expertise in MongoDB, Express.js, React, and Node.js, along with RESTful APIs.",
+    "A Java Developer should be skilled in Java, Spring Boot, Hibernate, and database management using SQL.",
   },
   {
-    title: "MERN Stack Developer",
+    title: "FullStack Developer",
     description:
-      "A Java Developer should be skilled in Java, Spring Boot, Hibernate, and database management using SQL.",
+    "A Full-Stack Developer works with HTML, CSS, JavaScript, React, Angular, Node.js, Express.js, Django, Spring Boot, MongoDB, MySQL, PostgreSQL, and DevOps tools.",
   },
 ];
 
