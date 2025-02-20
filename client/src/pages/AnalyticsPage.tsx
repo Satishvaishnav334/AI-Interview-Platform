@@ -1,6 +1,6 @@
 import AnalysisComponent from "@/pages/Analysis";
 import React from "react";
-import Certificate from "./Certificate";
+import Certificate from "../components/dashboard/Certificate";
 import { useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
 

@@ -1,6 +1,6 @@
 import Container from "@/components/general/Container";
 import DataVisualization from "@/components/general/DataVisualization";
-import StreakTracker from "@/components/general/StreakTracker";
+import StreakTracker from "@/components/dashboard/StreakTracker";
 import SessionInfoForm, { formSchema } from "@/components/interview/SessionInfoForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useInterviewStore from "@/store/interviewStore";

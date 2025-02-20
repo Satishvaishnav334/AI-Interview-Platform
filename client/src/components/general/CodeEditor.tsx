@@ -3,7 +3,7 @@ import Editor from '@monaco-editor/react';
 import LanguageSelector from '@/components/general/LanguageSelector';
 import Output from './Output';
 import { Button } from '../ui/button';
-import { ExecuteCode } from './ExecuteCode';
+import { ExecuteCode } from '../../utils/ExecuteCode';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import useProfileStore from '@/store/profileStore';

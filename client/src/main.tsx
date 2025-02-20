@@ -13,7 +13,7 @@ import RootLayout from './layouts/RootLayout'
 import InterviewPage from './pages/InterviewPage'
 import InterviewLayout from './layouts/InterviewLayout'
 import InterviewForm from './components/interview/InterviewForm'
-import AnalyticsPage from './components/general/AnayaticsPage'
+import AnalyticsPage from './pages/AnalyticsPage'
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
