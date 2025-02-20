@@ -10,7 +10,7 @@ import useInterviewStore from "@/store/interviewStore";
 import useSocketStore from "@/store/socketStore";
 import { candidateDetailsType, generateFeedback, generateNextQuestion } from "@/utils/handleQuestionAnswer";
 import selectRoundAndTimeLimit from "@/utils/selectRoundAndTimeLimit";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Avatar3D from "@/components/general/Avatar3D"
 import Avatar3DVariant from "@/components/general/Avatar3DVariant"
@@ -29,7 +29,7 @@ function InterviewPage() {
   const { transcript } = useAutoSpeechRecognizer(currentQuestionIndex);
 
   // helper function for generating next question using gemini API
-  const getQuestion = useCallback(async (transcribedText: string, currentQuestionIndex: number) => {
+  const getQuestion = async (transcribedText: string, currentQuestionIndex: number) => {
     if (!candidate) return;
 
     const roundAndTimeLimit = selectRoundAndTimeLimit(currentQuestionIndex);
@@ -60,7 +60,7 @@ function InterviewPage() {
     }
 
     return text;
-  }, [candidate]);
+  }
 
   const handleInterviewEnd = async () => {
     setResettingQuestion(true)

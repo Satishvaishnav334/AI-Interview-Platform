@@ -1,4 +1,3 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
 import { ClerkProvider } from '@clerk/clerk-react'
@@ -34,7 +33,7 @@ const router = createBrowserRouter([
         path: "",
         element: <LandingPage />,
       },
-     
+
       // protected routes
       {
         path: "dashboard",
@@ -88,17 +87,17 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    {/* auth setup */}
-    <ClerkProvider
-      publishableKey={PUBLISHABLE_KEY}
-      afterSignOutUrl="/"
-      signInForceRedirectUrl="/dashboard"
-      signUpForceRedirectUrl="/dashboard"
-      signInUrl="/auth/signin"
-      signUpUrl="/auth/signup"
-    >
-      <RouterProvider router={router} />
-    </ClerkProvider>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  // {/* auth setup */ }
+  < ClerkProvider
+    publishableKey={PUBLISHABLE_KEY}
+    afterSignOutUrl="/"
+    signInForceRedirectUrl="/dashboard"
+    signUpForceRedirectUrl="/dashboard"
+    signInUrl="/auth/signin"
+    signUpUrl="/auth/signup"
+  >
+    <RouterProvider router={router} />
+  </ ClerkProvider>
+  // </React.StrictMode>,
 )

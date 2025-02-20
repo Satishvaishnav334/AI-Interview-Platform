@@ -61,7 +61,7 @@ function Timer({ onReset, currentQuestionIndex, loadingNextQuestion }: { onReset
   }, [loadingNextQuestion]);
 
   return (
-    <span className="text-zinc-800 dark:text-zinc-200 font-semibold px-4 py-2 bg-zinc-200/80 dark:bg-zinc-800/80 rounded-md text-center">
+    <span className={`text-zinc-800 dark:text-zinc-200 font-semibold px-4 py-2 bg-zinc-200/80 dark:bg-zinc-800/80 rounded-md text-center ${timer <= 10 && "text-red-500"} ${loadingNextQuestion && "opacity-50 !cursor-not-allowed"}`}>
       {formatTime(timer)}
     </span>
   );
