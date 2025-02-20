@@ -83,13 +83,12 @@ const router = createBrowserRouter([
           },
         ],
       },
-      // 404 page
       {
-        path: "/",
+        path: "*",
         element: <NotFoundPage />,
-      },
+      }
     ]
-  }
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

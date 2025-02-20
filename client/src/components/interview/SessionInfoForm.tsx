@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
@@ -7,7 +6,6 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import SkillsInput from "./SkillsInput";
-import useInterviewStore from "@/store/interviewStore";
 import {
   Select,
   SelectContent,
@@ -16,6 +14,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { jobRoleSchema } from "@/types/InterviewData";
+import { Card, CardContent } from "../ui/card";
+import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import useInterviewStore from "@/store/interviewStore";
 import { useUser } from "@clerk/clerk-react";
 
 const formSchema = z.object({
@@ -27,9 +29,9 @@ const formSchema = z.object({
   skills: z.array(z.string()).nonempty("At least one skill is required"),
 });
 
-function SessionInfoForm() {
+export type { formSchema }
 
-  const { setCandidate } = useInterviewStore()
+function SessionInfoForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,6 +43,8 @@ function SessionInfoForm() {
   })
 
   const navigate = useNavigate()
+  const { setCandidate } = useInterviewStore()
+
   const user = useUser().user
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -56,15 +60,15 @@ function SessionInfoForm() {
 
   return (
     <Dialog>
-      <div className="flex flex-wrap justify-center items-center gap-2 max-w-3xl mx-auto">
-        {jobRoleSchema.options.map((option) => (
-          <DialogTrigger key={option} onClick={() => {
-            form.setValue("jobRole", option);
-          }} className="bg-gradient-to-r from-zinc-800 to-zinc-800 dark:from-zinc-200 dark:to-zinc-200 text-zinc-100 dark:text-zinc-900 transition-all duration-100 ease-in-out hover:from-purple-500 hover:to-blue-500 dark:hover:from-purple-500 dark:hover:to-blue-500 hover:text-zinc-100 dark:hover:text-zinc-100 rounded-md py-3 px-4">
-            {option}
-          </DialogTrigger>
-        ))}
-      </div>
+      <DialogTrigger asChild>
+        <Card
+          className="dark:bg-zinc-800 dark:text-neutral-300 py-10 flex items-center justify-center cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
+        >
+          <CardContent className="flex p-0 items-center justify-center h-full">
+            <Plus size={32} className="text-neutral-300" />
+          </CardContent>
+        </Card>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Start session</DialogTitle>
