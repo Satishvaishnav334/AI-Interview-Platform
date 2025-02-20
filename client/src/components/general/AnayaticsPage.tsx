@@ -10,7 +10,7 @@ const AnalyticsPage: React.FC = () => {
 
     const userData = {
         name: user?.firstName || "Not found",
-        phone: user?.phoneNumbers[0].phoneNumber || "Not found",
+        phone: user?.phoneNumbers[0]?.phoneNumber || "Not found",
         linkedin: "https://linkedin.com/in/johndoe",
         higherEducation: "Master's in Computer Science",
         jobRole: "Full Stack Developer",

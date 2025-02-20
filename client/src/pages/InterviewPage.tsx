@@ -75,16 +75,25 @@ function InterviewPage() {
       yearsOfExperience: candidate.yearsOfExperience,
     }
 
-    let feedback = await generateFeedback(userData, questionAnswerSets)
-
-    if (!feedback) {
+    try {
+      let feedback = await generateFeedback(userData, questionAnswerSets)
+  
+      if (!feedback) {
+        toast({ title: "Something went wrong while evaluating the question" })
+        return
+      }
+  
+      if(feedback.includes("```json")) {
+        feedback = feedback.replace("```json", "").replace("```", "")
+      }
+  
+      feedback = JSON.parse(feedback)
+      
+      socket.emit("interview-evaluation", feedback)
+    } catch (error) {
       toast({ title: "Something went wrong while evaluating the question" })
-      return
+      console.log(error)
     }
-
-    feedback = JSON.parse(feedback)
-    
-    socket.emit("interview-evaluation", feedback)
   }
 
   // main function to reset the question
@@ -171,19 +180,19 @@ function InterviewPage() {
     const handleInterviewAnalyticsData = async () => {
       try {
 
-        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/sessions`, {
+        const res = await axios.post(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions`, {
           socketId: socket.id
         })
 
         if (res.status !== 200) {
-          toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+          toast({ title: "Something went wrong while analyzing the question", variant: "destructive" })
           return
         }
 
         navigate(`/interview/${socket.id}/feedback`)
       } catch (error) {
         console.log(error)
-        toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+        toast({ title: "Something went wrong while analyzing the question", variant: "destructive" })
       } finally {
         setResettingQuestion(false)
       }
