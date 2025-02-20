@@ -20,7 +20,7 @@ function InterviewPage() {
 
   const socket = useSocket()
   const { setSocketId } = useSocketStore()
-  const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer } = useInterviewStore()
+  const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer, addCodeAttempt } = useInterviewStore()
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [resettingQuestion, setResettingQuestion] = useState(true);
@@ -75,14 +75,25 @@ function InterviewPage() {
       yearsOfExperience: candidate.yearsOfExperience,
     }
 
-    const feedback = await generateFeedback(userData, questionAnswerSets)
+    try {
+      let feedback = await generateFeedback(userData, questionAnswerSets)
 
-    if (!feedback) {
+      if (!feedback) {
+        toast({ title: "Something went wrong while evaluating the question" })
+        return
+      }
+
+      if (feedback.includes("```json")) {
+        feedback = feedback.replace("```json", "").replace("```", "")
+      }
+
+      feedback = JSON.parse(feedback)
+
+      socket.emit("interview-evaluation", feedback)
+    } catch (error) {
       toast({ title: "Something went wrong while evaluating the question" })
-      return
+      console.log(error)
     }
-
-    socket.emit("interview-evaluation", feedback)
   }
 
   // main function to reset the question
@@ -95,10 +106,18 @@ function InterviewPage() {
 
     try {
 
-      socket.emit("update-question-data", {
-        questionAnswerIndex: currentQuestionIndex,
-        answer: transcript,
-      });
+      if (selectRoundAndTimeLimit(currentQuestionIndex).round === "technical") {
+        socket.emit("update-question-data", {
+          questionAnswerIndex: currentQuestionIndex,
+          answer: transcript,
+          code: questionAnswerSets[currentQuestionIndex].code,
+        });
+      } else {
+        socket.emit("update-question-data", {
+          questionAnswerIndex: currentQuestionIndex,
+          answer: transcript,
+        });
+      }
 
       updateAnswer(transcript, currentQuestionIndex);
 
@@ -169,19 +188,19 @@ function InterviewPage() {
     const handleInterviewAnalyticsData = async () => {
       try {
 
-        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/v1/sessions`, {
+        const res = await axios.post(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions`, {
           socketId: socket.id
         })
 
         if (res.status !== 200) {
-          toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+          toast({ title: "Something went wrong while analyzing the question", variant: "destructive" })
           return
         }
 
         navigate(`/interview/${socket.id}/feedback`)
       } catch (error) {
         console.log(error)
-        toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+        toast({ title: "Something went wrong while analyzing the question", variant: "destructive" })
       } finally {
         setResettingQuestion(false)
       }
@@ -233,8 +252,8 @@ function InterviewPage() {
       <div className="flex items-center justify-between border-b-2 border-zinc-300 dark:border-zinc-700 px-24 h-16">
         <h3>Interview Analysis</h3>
         <div className="flex space-x-2 items-center">
-          <Timer currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
-          <Button variant="secondary" onClick={handleResetQuestion}>Next question</Button>
+          <Timer loadingNextQuestion={resettingQuestion} currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
+          <Button disabled={resettingQuestion} variant="secondary" onClick={handleResetQuestion}>Next question</Button>
           <Dialog>
             <DialogTrigger>
               <span className="bg-red-500 text-zinc-100 font-semibold rounded-md py-2 px-4">Leave</span>
@@ -275,7 +294,9 @@ function InterviewPage() {
                 </p>
               }
             </div>
-            <CodeEditor />
+            <CodeEditor addCompileAttempt={({ code, language }: { code: string, language: string }) => {
+              addCodeAttempt(code, language, currentQuestionIndex)
+            }} />
           </div>
           <div className="col-span-2 space-y-1 p-2">
             <Avatar3D text={questionAnswerSets && questionAnswerSets[currentQuestionIndex].question || "No question found"} />

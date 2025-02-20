@@ -44,7 +44,9 @@ type RoundType = "aptitude" | "technical" | "behavioral" | "system-design";
 type QuestionSchema = {
   question: string;
   answer: string;
+  code?: { code: string; language: string }[];
   answerReview: string;
+  correctAnswer: string;
   score: number;
   timeLimit: number;
   round: RoundType;
@@ -206,8 +208,10 @@ io.on("connection", (socket) => {
         const newQuestion: QuestionSchema = {
           question: data.question || "",
           answer: data.answer || "",
+          code: data.code || [],
           answerReview: data.answerReview || "",
           score: data.score || 0,
+          correctAnswer: data.correctAnswer || "",
           timeLimit: data.timeLimit || 60,
           round: data.round || "aptitude",
           startTime: Date.now(),
@@ -285,7 +289,11 @@ io.on("connection", (socket) => {
         if (!session) {
           throw new Error("Session not found");
         }
-        session.questions[feedback.questionAnswerIndex].answer = feedback.answer;
+        feedback.map((f: any, i:number) => {
+          session.questions[i].answerReview = feedback.feedback;
+          session.questions[i].score = feedback.score;
+          session.questions[i].correctAnswer = feedback.correctAnswer;
+        })
       }
     } catch (error) {
       handleSocketError(socket, error);

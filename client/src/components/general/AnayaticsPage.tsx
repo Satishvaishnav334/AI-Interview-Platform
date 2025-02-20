@@ -7,10 +7,11 @@ import { Link } from "react-router-dom";
 const AnalyticsPage: React.FC = () => {
 
     const user = useUser().user
+    console.log(user)
 
     const userData = {
         name: user?.firstName || "Not found",
-        phone: user?.phoneNumbers[0].phoneNumber || "Not found",
+        phone: user?.primaryPhoneNumber?.phoneNumber || user?.phoneNumbers[0]?.phoneNumber || "Not found",
         linkedin: "https://linkedin.com/in/johndoe",
         higherEducation: "Master's in Computer Science",
         jobRole: "Full Stack Developer",

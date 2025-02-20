@@ -75,7 +75,7 @@ You are an AI-powered interviewer conducting a professional coding and technical
 - "What are the trade-offs between using LSTMs vs. Transformers for NLP tasks?"
 - "Design a scalable URL shortener like Bitly. What technologies and database choices would you use?"
 
-Generate the appropriate interview question based on these instructions.
+Generate the appropriate interview question based on these instructions. And generate extra text except the question.
   `;
 };
 
@@ -94,21 +94,19 @@ For wrong questions provide an array in the following structure.
 
 - **Question Sets:**  ${JSON.stringify(questionAnswerSets)}
 
-**Example Output Format:**
-[
+**Example Output Format: (Array of Objects and don't add any extra text, not even a single space, json or backtick)**
+"[
   {
-    "question": "Question 1",
     "feedback": "Provide feedback for question 1"
     "score": "Provide score for question 1 in Number between 0-10 considering the candidate's performance, years of experience, job role and skills",
     "correctAnswer": "Provide the correct answer for question 1 in brief"
   },
   {
-    "question": "Question 2",
     "feedback": "Provide feedback for question 2"
     "score": "Provide score for question 2 in Number between 0-10 considering the candidate's performance, years of experience, job role and skills",
     "correctAnswer": "Provide the correct answer for question 2 in brief"
   },
-]
+]"
   `;
 };
 
@@ -117,7 +115,7 @@ export async function generateNextQuestion(
 ): Promise<string | null> {
   try {
     const basePrompt = getBasePromptForNextQuestion(candidateDetails);
-    const result = await model.generateContent(basePrompt + prompt);
+    const result = await model.generateContent(basePrompt);
     const text = result.response.text();
     return text;
   } catch (error) {
@@ -142,8 +140,9 @@ export async function generateFeedback(
       candidateDetails,
       questionAnswerSets
     );
-    const result = await model.generateContent(basePrompt + prompt);
+    const result = await model.generateContent(basePrompt);
     const text = result.response.text();
+    console.log("feedback:", text)
     return text;
   } catch (error) {
     if (
