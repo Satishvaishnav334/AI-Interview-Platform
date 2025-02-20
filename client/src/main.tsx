@@ -14,7 +14,6 @@ import RootLayout from './layouts/RootLayout'
 import InterviewPage from './pages/InterviewPage'
 import InterviewLayout from './layouts/InterviewLayout'
 import InterviewForm from './components/interview/InterviewForm'
-import AboutPage from './pages/AboutPage'
 import AnalyticsPage from './components/general/AnayaticsPage'
 
 // Import your Publishable Key
@@ -35,10 +34,7 @@ const router = createBrowserRouter([
         path: "",
         element: <LandingPage />,
       },
-      {
-        path: "about",
-        element: <AboutPage />,
-      },
+     
       // protected routes
       {
         path: "dashboard",

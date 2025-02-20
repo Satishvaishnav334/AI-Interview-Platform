@@ -327,7 +327,6 @@ function InterviewPage() {
                   .map((line, index) => (
                     <p key={index}>{line}</p>
                   ))}
-                  <SpeechRecognition/>
               </div>
             )}
           </div>
