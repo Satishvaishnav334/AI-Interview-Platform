@@ -63,9 +63,8 @@ function InterviewPage() {
   }
 
   const handleInterviewEnd = async () => {
-    setResettingQuestion(true)
     socket.emit("interview-complete", {})
-
+    
     if (!candidate || !questionAnswerSets) return
 
     const userData: candidateDetailsType = {
@@ -74,8 +73,9 @@ function InterviewPage() {
       skills: candidate.skills,
       yearsOfExperience: candidate.yearsOfExperience,
     }
-
+    
     try {
+      setResettingQuestion(true)
       let feedback = await generateFeedback(userData, questionAnswerSets)
 
       if (!feedback) {
