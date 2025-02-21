@@ -6,7 +6,6 @@ import { clerkClient } from "@clerk/express";
 const createSession = async (req: Request, res: Response) => {
   const { socketId, userId } = req.body;
 
-  console.log("runnn");
   if (!socketId) {
     res.status(400).json({
       success: false,

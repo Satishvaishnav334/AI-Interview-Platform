@@ -64,7 +64,7 @@ function InterviewPage() {
 
   const handleInterviewEnd = async () => {
     socket.emit("interview-complete", {})
-    
+
     if (!candidate || !questionAnswerSets) return
 
     const userData: candidateDetailsType = {
@@ -73,7 +73,7 @@ function InterviewPage() {
       skills: candidate.skills,
       yearsOfExperience: candidate.yearsOfExperience,
     }
-    
+
     try {
       setResettingQuestion(true)
       let feedback = await generateFeedback(userData, questionAnswerSets)
@@ -198,7 +198,6 @@ function InterviewPage() {
           socketId: socket.id,
           userId: candidate.id
         })
-        console.log(res)
 
         if (res.status !== 200) {
           toast({ title: "Something went wrong while analyzing the question", variant: "destructive" })

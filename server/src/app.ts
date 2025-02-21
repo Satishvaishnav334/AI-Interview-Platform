@@ -169,7 +169,6 @@ io.on("connection", (socket) => {
         status: "pending",
       };
 
-      console.log(`New Session:`, session);
       runningInterviewSession.set(socket.id, session);
     } catch (error) {
       handleSocketError(socket, error);
@@ -225,7 +224,6 @@ io.on("connection", (socket) => {
 
         session.questions.push(newQuestion);
         runningInterviewSession.set(socket.id, session);
-        console.log(`Updated Session:`, session);
       }
     } catch (error) {
       handleSocketError(socket, error);
@@ -248,7 +246,6 @@ io.on("connection", (socket) => {
           console.warn(`Invalid question index: ${data.questionAnswerIndex}`);
         }
 
-        console.log(`Updated Question Data:`, session.questions);
       }
     } catch (error) {
       handleSocketError(socket, error);

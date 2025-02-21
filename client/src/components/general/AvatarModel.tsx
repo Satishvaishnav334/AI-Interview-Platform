@@ -11,7 +11,6 @@ const Model = ({ visemeStrength }: { visemeStrength: number }) => {
     if (gltf.scene) {
       gltf.scene.traverse((child) => {
         if (child.isMesh && child.name === "Wolf3D_Head" && child.morphTargetDictionary) {
-          console.log("✅ Morph Targets Found:", child.morphTargetDictionary);
           mouthMeshRef.current = child;
         }
       });
