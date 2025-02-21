@@ -6,7 +6,7 @@ import { clerkClient } from "@clerk/express";
 const createSession = async (req: Request, res: Response) => {
   const { socketId, userId } = req.body;
 
-  console.log("runnn")
+  console.log("runnn");
   if (!socketId) {
     res.status(400).json({
       success: false,
@@ -16,15 +16,14 @@ const createSession = async (req: Request, res: Response) => {
   }
 
   try {
-
     const user = await clerkClient.users.getUser(userId);
 
-    if(!user || !user.emailAddresses[0]?.emailAddress){
+    if (!user || !user.emailAddresses[0]?.emailAddress) {
       res.status(400).json({
         success: false,
         message: "User not found",
       });
-      return
+      return;
     }
 
     const interviewSession = runningInterviewSession.get(socketId);
@@ -61,6 +60,14 @@ const createSession = async (req: Request, res: Response) => {
       message: "Session created successfully",
     });
   } catch (error) {
+    if (error instanceof Error && (error as any).code === 11000) {
+      res.status(409).json({
+        success: false,
+        message: "A session with this candidate email already exists",
+        error: error.message,
+      });
+      return
+    }
     if (error instanceof Error) {
       res.status(500).json({
         success: false,
