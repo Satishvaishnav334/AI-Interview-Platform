@@ -49,6 +49,7 @@ function SessionInfoForm() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setCandidate({
+      id: user?.id || null,
       email: user?.primaryEmailAddress?.emailAddress || null,
       name: user?.username || null,
       yearsOfExperience: values.yearsOfExperience,
@@ -62,7 +63,7 @@ function SessionInfoForm() {
     <Dialog>
       <DialogTrigger asChild>
         <Card
-          className="dark:bg-zinc-800 dark:text-neutral-300 py-10 flex items-center justify-center cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
+          className="dark:bg-zinc-800 dark:text-neutral-300 py-10 flex items-center justify-center cursor-pointer transition duration-300 hover:scale-[103%] shadow-md hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
         >
           <CardContent className="flex p-0 items-center justify-center h-full">
             <Plus size={32} className="text-neutral-300" />

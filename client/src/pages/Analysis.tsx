@@ -1,3 +1,4 @@
+import { InterviewSession } from "@/types/InterviewData";
 import { FaUser, FaPhone, FaLinkedin, FaGraduationCap, FaBriefcase, FaBullseye } from "react-icons/fa";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from "recharts";
 
@@ -19,9 +20,10 @@ interface UserData {
 // Update the AnalysisComponent props to use the UserData interface
 interface AnalysisComponentProps {
   userData: UserData;
+  analyticsData: InterviewSession | null
 }
 
-const AnalysisComponent = ({ userData }: AnalysisComponentProps) => {
+const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) => {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-xl rounded-2xl mt-10">
       <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Interview Analysis</h2>

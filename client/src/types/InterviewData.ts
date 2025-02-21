@@ -39,3 +39,46 @@ export type AboutCandidateType = {
   jobRole: JobRoleType;
   skills: string[];
 };
+
+export type QuestionSchema = {
+  question: string;
+  answer: string;
+  code?: { code: string; language: string }[];
+  answerReview: string;
+  correctAnswer: string;
+  score: number;
+  timeLimit: number;
+  round: RoundType;
+  startTime: number;
+  endTime: number | null;
+  faceExpressions: FaceExpression[];
+  gazeTracking: GazeTracking[];
+  questionAnswerIndex: number;
+};
+
+export type FaceExpression = {
+  expressionState: string;
+  timeStamp: number;
+};
+
+export type GazeTracking = {
+  timeStamp: number;
+  x: number;
+  y: number;
+};
+
+export type InterviewSession = {
+  sessionId: string;
+  candidate: {
+    email: string;
+    name: string;
+    jobRole: string;
+    skills: string[];
+    yearsOfExperience: number;
+  };
+  questions: QuestionSchema[];
+  startTime: number;
+  endTime: number | null;
+  currentQuestionIndex: number;
+  status: "pending" | "active" | "completed";
+};

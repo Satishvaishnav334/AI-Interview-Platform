@@ -59,7 +59,7 @@ function DashboardPage() {
           {roles.map((role, index) => (
             <Card
               key={index}
-              className="dark:bg-zinc-800 dark:text-neutral-300 p-6 cursor-pointer transition duration-300 hover:scale-[103%] hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
+              className="dark:bg-zinc-800 dark:text-neutral-300 p-6 cursor-pointer transition duration-300 shadow-md hover:scale-[103%] hover:shadow-lg bg-white hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
               onClick={() => onSubmit({ yearsOfExperience: 0, jobRole: role.title as JobRoleType, skills: [...role.skills] as [string, ...string[]] })}
             >
               <CardHeader className="py-1 px-0">

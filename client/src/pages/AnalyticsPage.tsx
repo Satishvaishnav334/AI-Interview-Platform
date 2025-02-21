@@ -1,12 +1,21 @@
 import AnalysisComponent from "@/pages/Analysis";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Certificate from "../components/dashboard/Certificate";
 import { useUser } from "@clerk/clerk-react";
 import { Link } from "react-router-dom";
+import useSocketStore from "@/store/socketStore";
+import { toast } from "@/hooks/use-toast";
+import axios from "axios";
+import { InterviewSession } from "@/types/InterviewData";
+import { Loader2 } from "lucide-react";
 
 const AnalyticsPage: React.FC = () => {
 
+    const { socketId } = useSocketStore()
     const user = useUser().user
+
+    const [analyticsData, setAnalyticsData] = useState<null | InterviewSession>(null)
+    const [fetchingAnalyticsData, setFetchingAnalyticsData] = useState(true)
 
     const userData = {
         name: user?.firstName || "Not found",
@@ -26,13 +35,66 @@ const AnalyticsPage: React.FC = () => {
         ],
     };
 
+    useEffect(() => {
+        const fetchSessionData = async () => {
+
+            if (!fetchingAnalyticsData) {
+                setFetchingAnalyticsData(true)
+            }
+
+            if (!socketId) {
+                toast({
+                    title: "Socket id not found",
+                    variant: "destructive"
+                })
+                return
+            }
+
+            try {
+                const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions//data/${socketId}`, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                })
+
+                if (res.status !== 200) {
+                    toast({
+                        title: "Something went wrong while fetching analytics data",
+                        variant: "destructive"
+                    })
+                    return
+                }
+
+                setAnalyticsData(res.data)
+
+            } catch (error) {
+                toast({
+                    title: "Something went wrong while fetching analytics data",
+                    variant: "destructive"
+                })
+                console.log(error)
+            } finally {
+                setFetchingAnalyticsData(false)
+            }
+
+        }
+        fetchSessionData()
+    }, [])
+
     return (
         <div className="p-6">
-            <AnalysisComponent userData={userData} />
-            <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={85} />
-            <div className="flex justify-center items-center pb-24">
-                <Link className="bg-blue-400 py-2 px-4 text-lg rounded-xl " to="/dashboard">Back to home</Link>
-            </div>
+            {fetchingAnalyticsData ?
+                <div className="h-full w-full flex justify-center items-center">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                </div>
+                :
+                <>
+                    <AnalysisComponent userData={userData} analyticsData={analyticsData} />
+                    <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={85} />
+                    <div className="flex justify-center items-center pb-24">
+                        <Link className="bg-blue-400 py-2 px-4 text-lg rounded-xl " to="/dashboard">Back to home</Link>
+                    </div>
+                </>}
         </div>
     );
 };
