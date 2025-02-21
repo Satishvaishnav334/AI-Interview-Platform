@@ -2,7 +2,7 @@ import http from "http";
 import express from "express";
 import cors from "cors";
 import { Server } from "socket.io";
-import { clerkMiddleware, createClerkClient } from '@clerk/express'
+import { clerkMiddleware } from '@clerk/express'
 
 const app = express();
 const server = http.createServer(app);
@@ -26,12 +26,8 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
-app.use(clerkMiddleware({}));
+app.use(clerkMiddleware());
 app.options("*", cors());
-
-const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-});
 
 // Define data structures
 type FaceExpression = {
@@ -359,4 +355,4 @@ app.use("/api/v1/sessions", sessionRouter);
 app.use("/api/v1/user", userRouter);
 
 // Export server and app
-export { app, server, runningInterviewSession, clerkClient };
+export { app, server, runningInterviewSession };

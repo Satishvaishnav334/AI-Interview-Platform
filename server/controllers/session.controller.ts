@@ -1,10 +1,12 @@
 import { Response, Request } from "express";
-import { clerkClient, runningInterviewSession } from "../src/app";
+import { runningInterviewSession } from "../src/app";
 import { SessionModel } from "../models/session.model";
+import { clerkClient } from "@clerk/express";
 
 const createSession = async (req: Request, res: Response) => {
   const { socketId, userId } = req.body;
 
+  console.log("runnn")
   if (!socketId) {
     res.status(400).json({
       success: false,
