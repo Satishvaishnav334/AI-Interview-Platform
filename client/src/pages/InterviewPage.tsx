@@ -261,7 +261,7 @@ function InterviewPage() {
         <h3>Interview Analysis</h3>
         <div className="flex space-x-2 items-center">
           <Timer loadingNextQuestion={resettingQuestion} currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
-          <Button disabled={resettingQuestion} variant="secondary" onClick={handleResetQuestion}>{questionAnswerSets && questionAnswerSets[currentQuestionIndex].round === "end" ? "End Interview" : "Next question"}</Button>
+          <Button disabled={resettingQuestion} variant="secondary" onClick={handleResetQuestion}>{selectRoundAndTimeLimit(currentQuestionIndex + 1).round === "end" ? "End Interview" : "Next question"}</Button>
           <Dialog>
             <DialogTrigger>
               <span className="bg-red-500 text-zinc-100 font-semibold rounded-md py-2 px-4">Leave</span>
