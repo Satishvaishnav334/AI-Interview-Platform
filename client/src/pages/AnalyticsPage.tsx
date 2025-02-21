@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 const AnalyticsPage: React.FC = () => {
 
     const user = useUser().user
-    console.log(user)
 
     const userData = {
         name: user?.firstName || "Not found",

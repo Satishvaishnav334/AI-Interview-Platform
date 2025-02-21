@@ -1,26 +1,20 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-  candidateEmail: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  sessionId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  candidateName: {
-    type: String || null,
-    default: null,
-  },
   jobRole: {
     type: String,
     required: true,
   },
   skills: {
     type: [String],
+    required: true,
+  },
+  userId: {
+    type: String,
+    required: true,
+  },
+  candidate: {
+    type: String,
     required: true,
   },
   yearsOfExperience: {
@@ -63,4 +57,4 @@ const sessionSchema = new mongoose.Schema({
   },
 });
 
-export const SessionModel = mongoose.model("Sample", sessionSchema);
+export const SessionModel = mongoose.model("Session", sessionSchema);

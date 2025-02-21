@@ -1,5 +1,5 @@
-const DB_NAME = "interview-ai"
+const DB_NAME = "interviewai"
 
-const appName = 'AppName'
+const appName = 'interview-ai'
 
 export { DB_NAME, appName }

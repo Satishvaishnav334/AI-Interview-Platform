@@ -3,7 +3,7 @@ import { DB_NAME } from "../src/constants";
 
 const connectDB = async () => {
     try {
-        const connectionString = process.env.ENVIRONMENT === "production" ? `${process.env.MONGODB_URI}/${DB_NAME}` : process.env.MONGODB_URI
+        const connectionString = process.env.ENVIRONMENT === "production" ? `${process.env.MONGODB_URI}${DB_NAME}` : process.env.MONGODB_URI
         if(!connectionString) {
             throw new Error("MONGODB_URI is not defined")
         }

@@ -1,9 +1,9 @@
 import { Response, Request } from "express";
-import { runningInterviewSession } from "../src/app";
+import { clerkClient, runningInterviewSession } from "../src/app";
 import { SessionModel } from "../models/session.model";
 
 const createSession = async (req: Request, res: Response) => {
-  const { socketId } = req.body;
+  const { socketId, userId } = req.body;
 
   if (!socketId) {
     res.status(400).json({
@@ -14,6 +14,17 @@ const createSession = async (req: Request, res: Response) => {
   }
 
   try {
+
+    const user = await clerkClient.users.getUser(userId);
+
+    if(!user || !user.emailAddresses[0]?.emailAddress){
+      res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+      return
+    }
+
     const interviewSession = runningInterviewSession.get(socketId);
 
     if (!interviewSession) {
@@ -25,9 +36,8 @@ const createSession = async (req: Request, res: Response) => {
     }
 
     const response = await SessionModel.create({
-      candidateEmail: interviewSession.candidate.email,
-      sessionId: interviewSession.sessionId,
-      candidateName: interviewSession.candidate.name,
+      userId: userId,
+      candidate: interviewSession.candidate.email,
       jobRole: interviewSession.candidate.jobRole,
       skills: interviewSession.candidate.skills,
       yearsOfExperience: interviewSession.candidate.yearsOfExperience,
@@ -85,7 +95,7 @@ const getAllSessions = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Email id is required" });
   }
 
-  const response = await SessionModel.findOne({ candidateEmail: email });
+  const response = await SessionModel.findOne({ candidate: email });
 
   if (!response) {
     res.status(404).json({ error: "Interview data not found" });

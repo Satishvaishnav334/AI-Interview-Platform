@@ -189,8 +189,10 @@ function InterviewPage() {
       try {
 
         const res = await axios.post(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions`, {
-          socketId: socket.id
+          socketId: socket.id,
+          userId: candidate.id
         })
+        console.log(res)
 
         if (res.status !== 200) {
           toast({ title: "Something went wrong while analyzing the question", variant: "destructive" })

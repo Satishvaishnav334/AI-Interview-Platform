@@ -32,6 +32,7 @@ export type FaceExpressionType = {
 export type JobRoleType = z.infer<typeof jobRoleSchema>;
 
 export type AboutCandidateType = {
+  id: string | null;
   email: string | null;
   name: string | null;
   yearsOfExperience: number;

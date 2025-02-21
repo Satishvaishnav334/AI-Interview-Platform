@@ -39,6 +39,7 @@ function DashboardPage() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setCandidate({
+      id: user?.id || null,
       email: user?.primaryEmailAddress?.emailAddress || null,
       name: user?.username || null,
       yearsOfExperience: values.yearsOfExperience,
