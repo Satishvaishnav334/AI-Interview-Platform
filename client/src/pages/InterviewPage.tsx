@@ -258,7 +258,7 @@ function InterviewPage() {
       {/* Header */}
       <div className="flex items-center justify-between border-b-2 border-zinc-300 dark:border-zinc-700 px-24 h-16">
         <h3>Interview Analysis</h3>
-        <div className="flex space-x-2 items-center">
+        <div className="select-none flex space-x-2 items-center">
           <Timer loadingNextQuestion={resettingQuestion} currentQuestionIndex={currentQuestionIndex} onReset={handleResetQuestion} />
           <Button disabled={resettingQuestion} variant="secondary" onClick={handleResetQuestion}>{selectRoundAndTimeLimit(currentQuestionIndex + 1).round === "end" ? "End Interview" : "Next question"}</Button>
           <Dialog>

@@ -1,8 +1,13 @@
-import { InterviewSession } from "@/types/InterviewData";
+import { FaceExpression, InterviewSession } from "@/types/InterviewData";
 import { FaUser, FaPhone, FaLinkedin, FaGraduationCap, FaBriefcase, FaBullseye } from "react-icons/fa";
 import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
-
+import { Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, XAxis, YAxis } from "recharts"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import {
   Card,
   CardContent,
@@ -18,6 +23,9 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
+import TimelineChart from "@/components/charts/TimelineChart";
+import CopyButton from "@/components/general/CopyButton";
+import { formatTimeInShortWords } from "@/utils/formatTime";
 
 interface Skill {
   name: string;
@@ -59,8 +67,51 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
     }
   ))
 
+  const timeSpentPerRound = analyticsData?.questions.reduce((acc, { startTime, endTime, round }) => {
+    const duration = endTime ? endTime - startTime : Date.now() - startTime;
+
+    // If the round already exists, add to the duration; otherwise, initialize it
+    acc[round] = (acc[round] || 0) + duration;
+
+    return acc;
+  }, {} as Record<string, number>);
+
+  // Convert to an array format for the line chart
+  const chartData = Object.entries(timeSpentPerRound || {}).map(([round, duration]) => ({
+    round: `Round ${round}`,
+    timeSpent: duration / 1000, // Convert from ms to seconds
+  }));
+
+  const getMostCommonExpression = (faceExpressions: FaceExpression[]) => {
+    const expressionFrequency = faceExpressions.reduce((freq: { [key: string]: number }, { expressionState }) => {
+      freq[expressionState] = (freq[expressionState] || 0) + 1;
+      return freq;
+    }, {});
+
+    const mostCommonExpression = Object.entries(expressionFrequency).reduce<{ expression: string | null; count: number }>(
+      (max, [expression, count]) => (count > max.count ? { expression, count } : max),
+      { expression: null, count: 0 }
+    ).expression;
+
+    return mostCommonExpression ? mostCommonExpression : 'No data available';
+  }
+
+  const expressions = analyticsData?.questions.reduce((agg, { faceExpressions }) => {
+    faceExpressions.forEach(({ expressionState, timeStamp }) => {
+      if (!agg[expressionState]) {
+        // Initialize with current timeStamp as both start and end
+        agg[expressionState] = [timeStamp, timeStamp];
+      } else {
+        // Update to keep the earliest and latest timeStamps
+        agg[expressionState][0] = Math.min(agg[expressionState][0], timeStamp);
+        agg[expressionState][1] = Math.max(agg[expressionState][1], timeStamp);
+      }
+    });
+    return agg;
+  }, {} as Record<string, [number, number]>)
+
   return (
-    <div className="p-6 shadow-xl rounded-2xl mt-10">
+    <div className="p-6 mt-10">
       <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Interview Analysis</h2>
 
 
@@ -105,101 +156,51 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
         </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-2 max-w-[90rem] mx-auto">
+      <div className="grid md:grid-cols-2 gap-2 pt-12 max-w-[90rem] mx-auto">
         {/* Skills Bar Chart */}
-        <div className="mt-10">
-          <Card className="bg-transparent">
-            <CardHeader>
-              <CardTitle>Skill Proficiency</CardTitle>
-              <CardDescription>Current Skill Assessment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig}>
-                <BarChart
-                  data={skillLevel}
-                  layout="vertical"
-                  margin={{
-                    right: 16,
-                  }}
-                >
-                  <CartesianGrid horizontal={false} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                  />
-                  <XAxis dataKey="level" type="number" hide />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="line" />}
-                  />
-                  <Bar
-                    dataKey="level"
-                    fill="var(--color-level)"
-                    radius={4}
-                  >
-                    <LabelList
-                      dataKey="name"
-                      position="insideLeft"
-                      offset={8}
-                      className="fill-zinc-900"
-                      fontSize={16}
-                    />
-                    <LabelList
-                      dataKey="level"
-                      position="right"
-                      offset={8}
-                      className="fill-foreground"
-                      fontSize={12}
-                    />
-                  </Bar>
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-            <CardFooter className="flex-col items-start gap-2 text-sm">
-              <div className="flex gap-2 font-medium leading-none">
-                Your skills are trending up! <TrendingUp className="h-4 w-4" />
-              </div>
-              <div className="leading-none text-muted-foreground">
-                Keep honing those skills and continue your journey of improvement.
-              </div>
-            </CardFooter>
-          </Card>
-        </div>
-
-        {/* Skills Bar Chart */}
-        <div className="mt-10">
-          <Card className="bg-transparent">
-            <CardHeader>
-              <CardTitle>Skill Proficiency</CardTitle>
-              <CardDescription>Current Skill Assessment</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={chartConfig}
-                className="mx-auto aspect-square max-h-[250px]"
+        <Card className="bg-transparent">
+          <CardHeader>
+            <CardTitle>Skill Proficiency</CardTitle>
+            <CardDescription>Current Skill Assessment</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig}>
+              <BarChart
+                data={skillLevel}
+                layout="vertical"
+                margin={{
+                  right: 16,
+                }}
               >
-                <RadarChart data={skillLevel}>
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent hideLabel />}
-                  />
-                  <PolarGrid gridType="circle" />
-                  <PolarAngleAxis dataKey="month" />
-                  <Radar
+                <CartesianGrid horizontal={true} />
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                />
+                <XAxis dataKey="level" type="number" hide />
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent indicator="line" />}
+                />
+                <Bar
+                  dataKey="level"
+                  fill="var(--color-level)"
+                  radius={4}
+                >
+                  <LabelList
                     dataKey="level"
-                    fill="var(--color-level)"
-                    fillOpacity={0.6}
-                    dot={{
-                      r: 4,
-                      fillOpacity: 1,
-                    }}
+                    position="right"
+                    offset={8}
+                    className="fill-foreground"
+                    fontSize={12}
                   />
-                </RadarChart>
-              </ChartContainer>
-            </CardContent>
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
           <CardFooter className="flex-col items-start gap-2 text-sm">
             <div className="flex gap-2 font-medium leading-none">
               Your skills are trending up! <TrendingUp className="h-4 w-4" />
@@ -209,8 +210,168 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
             </div>
           </CardFooter>
         </Card>
+
+        {/* Skills Bar Chart */}
+        <Card className="bg-transparent">
+          <CardHeader>
+            <CardTitle>Expression Analysis</CardTitle>
+            <CardDescription>Face expressions during the interview</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square max-h-[250px]"
+            >
+              <RadarChart data={skillLevel}>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <PolarGrid gridType="circle" />
+                <PolarAngleAxis dataKey="month" />
+                <Radar
+                  dataKey="level"
+                  fill="var(--color-level)"
+                  fillOpacity={0.6}
+                  dot={{
+                    r: 4,
+                    fillOpacity: 1,
+                  }}
+                />
+              </RadarChart>
+            </ChartContainer>
+          </CardContent>
+          <CardFooter className="flex-col items-start gap-2 text-sm">
+            <div className="flex gap-2 font-medium leading-none">
+              Your skills are trending up! <TrendingUp className="h-4 w-4" />
+            </div>
+            <div className="leading-none text-muted-foreground">
+              Keep honing those skills and continue your journey of improvement.
+            </div>
+          </CardFooter>
+        </Card>
+
+        <Card className="bg-transparent">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg font-semibold text-gray-800">
+              Interview Performance Over Time
+            </CardTitle>
+            <CardDescription className="text-gray-500">
+              Time spent per round (January - June 2024)
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="pt-4">
+            <ChartContainer config={chartConfig}>
+              <LineChart
+                accessibilityLayer
+                data={chartData}
+                margin={{ top: 20, left: 20, right: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-gray-300" />
+                <XAxis
+                  dataKey="round"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  tickFormatter={(value) => `Round ${value}`}
+                  className="text-gray-600 text-sm"
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={10}
+                  className="text-gray-600 text-sm"
+                  label={{ value: "Time (s)", angle: -90, position: "insideLeft", dy: -10 }}
+                />
+                <ChartTooltip
+                  cursor={{ stroke: "var(--color-primary)", strokeWidth: 1 }}
+                  content={<ChartTooltipContent indicator="line" />}
+                />
+                <Line
+                  dataKey="timeSpent"
+                  type="monotone"
+                  stroke="hsl(var(--color-primary))"
+                  strokeWidth={2.5}
+                  dot={{ r: 4, fill: "hsl(var(--color-primary))" }}
+                  activeDot={{ r: 6, fill: "hsl(var(--color-primary))", strokeWidth: 2 }}
+                >
+                  <LabelList
+                    dataKey="timeSpent"
+                    position="top"
+                    offset={8}
+                    className="fill-gray-800 text-xs font-medium"
+                  />
+                </Line>
+              </LineChart>
+            </ChartContainer>
+          </CardContent>
+
+          <CardFooter className="flex flex-col items-start gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-2 font-medium text-green-600">
+              Trending up by 5.2% this month <TrendingUp className="h-4 w-4 text-green-600" />
+            </div>
+            <div className="text-gray-500">
+              Showing total interview performance over the last 6 months.
+            </div>
+          </CardFooter>
+        </Card>
+
+        {expressions && <TimelineChart expressions={expressions} />}
       </div>
-    </div>
+
+      <div className="max-w-5xl py-12 mx-auto">
+        <Accordion type="single" defaultValue={analyticsData?.questions[0]?.question} collapsible>
+          {analyticsData?.questions.map(({ answer, answerReview, score, correctAnswer, startTime, endTime, round, question, code, faceExpressions }, index) => (
+            <AccordionItem key={startTime} value={question}>
+              <AccordionTrigger>Q{index + 1} - {question} ({round})</AccordionTrigger>
+              <AccordionContent>
+                {score > 5 ?
+                  <p className="bg-green-500/60 p-4 rounded">
+                    Your answer is correct: {answer}
+                  </p>
+                  :
+                  <>
+                    <p className="bg-red-500/60 p-4 rounded">
+                      Your answer is wrong: {answer}
+                    </p>
+                    <p className="bg-green-500/60 p-4 rounded">
+                      Correct answer should be: {correctAnswer}
+                    </p>
+                  </>
+                }
+                <p className="bg-zinc-800/70 p-4 rounded">Answer Review: {answerReview}</p>
+                {code && code.map(({ code, language }, index) => (
+                  <div className="bg-zinc-800/70 rounded-md m-4 relative min-h-16">
+                    <div className="absolute right-4 top-4 flex space-x-2">
+                      <span className="py-1.5 px-2.5 bg-zinc-700/70 rounded-sm">Attempt {index + 1 < 9 ? `0${index + 1}` : index + 1}</span>
+                      <span className="py-1.5 px-2.5 bg-zinc-700/70 rounded-sm">{language}</span>
+                      <CopyButton content={code} />
+                    </div>
+                    <section className="p-4">
+                      {code}
+                    </section>
+                  </div>
+                ))}
+                <div className="flex justify-evenly items-center bg-zinc-800/70 py-6">
+                  <div className="flex flex-col justify-center items-center">
+                    <p className="font-semibold text-xl">{formatTimeInShortWords((endTime || Date.now()) - startTime)}</p>
+                    <p className="text-sm text-zinc-400">Time Spent</p>
+                  </div>
+                  <div className="flex flex-col justify-center items-center">
+                    <p className="font-semibold text-xl">{getMostCommonExpression(faceExpressions)}</p>
+                    <p className="text-sm text-zinc-400">Most common face expression</p>
+                  </div>
+                  <div className="flex flex-col justify-center items-center">
+                    <p className="font-semibold text-xl">{score}/10</p>
+                    <p className="text-sm text-zinc-400">Score</p>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
 
     </div >
   );
