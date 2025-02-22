@@ -333,7 +333,7 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
                   :
                   <>
                     <p className="bg-red-500/60 p-4 rounded">
-                      Your answer is wrong: {answer}
+                      Your answer is wrong: {answer || "You didn't said anything"}
                     </p>
                     <p className="bg-green-500/60 p-4 rounded">
                       Correct answer should be: {correctAnswer}
