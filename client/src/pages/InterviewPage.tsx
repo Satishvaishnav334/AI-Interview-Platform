@@ -63,10 +63,9 @@ function InterviewPage() {
   }
 
   const handleInterviewEnd = async () => {
-    socket.emit("interview-complete", {})
-
+    
     if (!candidate || !questionAnswerSets) return
-
+    
     const userData: candidateDetailsType = {
       candidateName: candidate.name,
       jobRole: candidate.jobRole,
@@ -90,6 +89,7 @@ function InterviewPage() {
       feedback = JSON.parse(feedback)
 
       socket.emit("interview-evaluation", feedback)
+      socket.emit("interview-complete", {})
     } catch (error) {
       toast({ title: "Something went wrong while evaluating the question" })
       console.log(error)

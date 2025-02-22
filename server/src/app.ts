@@ -289,9 +289,11 @@ io.on("connection", (socket) => {
           throw new Error("Session not found");
         }
         feedback.map((f: any, i:number) => {
-          session.questions[i].answerReview = feedback.feedback;
-          session.questions[i].score = feedback.score;
-          session.questions[i].correctAnswer = feedback.correctAnswer;
+          console.log(f.feedback)
+          session.questions[i].answerReview = f.feedback;
+          session.questions[i].score = f.score;
+          session.questions[i].correctAnswer = f.correctAnswer;
+          console.log(session.questions[i])
         })
       }
       console.log(runningInterviewSession.get(socket.id)?.questions)

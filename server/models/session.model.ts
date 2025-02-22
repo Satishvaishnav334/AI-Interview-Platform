@@ -28,6 +28,9 @@ const sessionSchema = new mongoose.Schema({
         answer: String,
         timeLimit: Number,
         round: String,
+        answerReview: String,
+        score: Number,
+        correctAnswer: String,
         startTime: Number,
         endTime: Number,
         faceExpressions: [
