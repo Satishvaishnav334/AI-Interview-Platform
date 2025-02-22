@@ -215,7 +215,7 @@ io.on("connection", (socket) => {
           correctAnswer: data.correctAnswer || "",
           timeLimit: data.timeLimit || 60,
           round: data.round || "aptitude",
-          startTime: Date.now(),
+          startTime: data.startTime || Date.now(),
           endTime: null,
           faceExpressions: [],
           gazeTracking: [],

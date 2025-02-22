@@ -84,29 +84,47 @@ const getBasePromptForQuestionFeedback = (
   questionAnswerSets: QuestionAnswerType[]
 ) => {
   return `
-You are an expert interview feedback generator. You are provided with a candidate's detailed profile and a series of interview question sets along with the candidate's answers. Your task is to analyze the candidate's responses and generate actionable feedback.
+You are an expert interview feedback generator. You are provided with a candidate's detailed profile and a series of interview question sets along with the candidate's answers. Your task is to analyze the candidate's responses and generate actionable, constructive feedback.
 
-For wrong questions provide an array in the following structure.
+Input Data Structure:
+- Candidate Details: ${JSON.stringify(candidateDetails)}
+- Question Sets: ${JSON.stringify(questionAnswerSets)}
 
-**Input Data Structure:**
+Output Requirements:
+- Return a JSON array of objects.
+- Each object must have exactly three keys:
+  - "feedback": A concise, constructive analysis of the candidate’s answer.
+  - "score": A number between 0 and 10 evaluating the answer based on performance, experience, job role, and skills.
+  - "correctAnswer": A brief, plain text version of the correct answer or code snippet if applicable.
+- Do NOT include any markdown formatting (such as triple backticks) or additional symbols in any field. The "correctAnswer" field must be plain text (or plain code as a string) so that the entire output is valid JSON.
+- Do not include any extra text or formatting outside of the JSON output.
 
-- **Candidate Details:**  ${JSON.stringify(candidateDetails)}
+Example Output (valid JSON):
 
-- **Question Sets:**  ${JSON.stringify(questionAnswerSets)}
-
-**Example Output Format: (Array of Objects and don't add any extra text, not even a single space, json or backtick)**
-"[
+[
   {
-    "feedback": "Provide feedback for question 1"
-    "score": "Provide score for question 1 in Number between 0-10 considering the candidate's performance, years of experience, job role and skills",
-    "correctAnswer": "Provide the correct answer for question 1 in brief"
+    "feedback": "The candidate did not provide an answer for the question about using setInterval to increment a counter in a React component. This indicates a lack of understanding of basic React concepts and timers. The candidate should practice implementing state updates using setInterval within a React component.",
+    "score": 2,
+    "correctAnswer": "import React, { useState, useEffect } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(0);\n\n  useEffect(() => {\n    const intervalId = setInterval(() => {\n      setCount(prevCount => prevCount + 1);\n    }, 1000);\n\n    return () => clearInterval(intervalId);\n  }, []);\n\n  return <h1>{count}</h1>;\n}\n\nexport default Counter;"
   },
   {
-    "feedback": "Provide feedback for question 2"
-    "score": "Provide score for question 2 in Number between 0-10 considering the candidate's performance, years of experience, job role and skills",
-    "correctAnswer": "Provide the correct answer for question 2 in brief"
+    "feedback": "The candidate did not provide an answer regarding learning a new technology. This reveals a gap in showcasing adaptability and problem-solving skills. The candidate should prepare examples of past experiences demonstrating their ability to quickly learn and apply new technologies.",
+    "score": 1,
+    "correctAnswer": "A good approach involves identifying core concepts, using online resources such as documentation and tutorials, building small projects to practice, and seeking help from communities or colleagues. It is important to focus on understanding underlying principles rather than just memorizing syntax."
   },
-]"
+  {
+    "feedback": "The candidate provided no answer on how to initialize the counter to 10. This indicates a fundamental gap in understanding React state initialization. The candidate should review how to set initial state values using useState.",
+    "score": 2,
+    "correctAnswer": "import React, { useState } from 'react';\n\nfunction Counter() {\n  const [count, setCount] = useState(10);\n\n  return (\n    <div>\n      <p>Count: {count}</p>\n      <button onClick={() => setCount(count + 1)}>Increment</button>\n    </div>\n  );\n}\n\nexport default Counter;"
+  },
+  {
+    "feedback": "The candidate did not provide an answer regarding file organization in a MERN stack application. This suggests a lack of experience in structuring projects for maintainability and scalability. The candidate needs to learn common folder structures and their respective roles in a MERN application.",
+    "score": 1,
+    "correctAnswer": "A typical MERN stack structure includes a 'client' folder for the React frontend (with components, pages, services, and utils), a 'server' folder for the Node.js/Express backend (with models, controllers, routes, and middleware), a 'config' folder for configuration files, a 'utils' folder for utility functions, and a 'public' folder for static assets."
+  }
+]
+
+Ensure that your output is exactly in this JSON format, with no extra text, spaces, or markdown formatting, so that it can be parsed correctly with JSON.parse.
   `;
 };
 
@@ -142,7 +160,7 @@ export async function generateFeedback(
     );
     const result = await model.generateContent(basePrompt);
     const text = result.response.text();
-    console.log("feedback:", text)
+    console.log("feedback:", text);
     return text;
   } catch (error) {
     if (

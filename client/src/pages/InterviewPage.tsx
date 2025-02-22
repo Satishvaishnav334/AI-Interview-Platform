@@ -63,9 +63,9 @@ function InterviewPage() {
   }
 
   const handleInterviewEnd = async () => {
-    
+
     if (!candidate || !questionAnswerSets) return
-    
+
     const userData: candidateDetailsType = {
       candidateName: candidate.name,
       jobRole: candidate.jobRole,
@@ -78,7 +78,8 @@ function InterviewPage() {
       let feedback = await generateFeedback(userData, questionAnswerSets)
 
       if (!feedback) {
-        toast({ title: "Something went wrong while evaluating the question" })
+        toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+        navigate("/dashboard")
         return
       }
 
@@ -86,12 +87,17 @@ function InterviewPage() {
         feedback = feedback.replace("```json", "").replace("```", "")
       }
 
+      if (feedback.includes("feedback:")) {
+        feedback = feedback.replace("`feedback:", "")
+      }
+
       feedback = JSON.parse(feedback)
 
       socket.emit("interview-evaluation", feedback)
       socket.emit("interview-complete", {})
     } catch (error) {
-      toast({ title: "Something went wrong while evaluating the question" })
+      toast({ title: "Something went wrong while evaluating the question", variant: "destructive" })
+      navigate("/dashboard")
       console.log(error)
     }
   }
@@ -102,6 +108,10 @@ function InterviewPage() {
 
     // Block multiple resets
     if (resettingQuestion) return;
+    if (Date.now() - questionAnswerSets[currentQuestionIndex].startTime < 10000) {
+      toast({ title: "Please wait for the previous question to finish" })
+      return
+    }
     setResettingQuestion(true);
 
     try {
@@ -131,12 +141,14 @@ function InterviewPage() {
 
       if (!newGeneratedQuestion) {
         toast({ title: "Something went wrong while generating question", variant: "destructive" });
+        navigate("/dashboard")
         return;
       }
 
       addQuestionAnswerSet({
         question: newGeneratedQuestion,
         answer: "",
+        startTime: Date.now(),
         round: selectRoundAndTimeLimit(currentQuestionIndex + 1).round,
         timeLimit: selectRoundAndTimeLimit(currentQuestionIndex + 1).timeLimit,
       });
@@ -146,6 +158,7 @@ function InterviewPage() {
       socket.emit("initialize-new-question", {
         question: newGeneratedQuestion,
         answer: "",
+        startTime: Date.now(),
         timeLimit: selectRoundAndTimeLimit(currentQuestionIndex + 1).timeLimit,
         round: selectRoundAndTimeLimit(currentQuestionIndex + 1).round,
       });
@@ -158,6 +171,7 @@ function InterviewPage() {
       })
       console.log(error)
       setResettingQuestion(false);
+      navigate("/dashboard")
     }
   };
 
@@ -167,9 +181,10 @@ function InterviewPage() {
       if (!questionAnswerSets && candidate) {
         const text = await getQuestion("", currentQuestionIndex)
         if (!text) {
+          navigate("/dashboard")
           return
         }
-        addQuestionAnswerSet({ question: text, answer: "", round: "technical", timeLimit: 180 });
+        addQuestionAnswerSet({ question: text, answer: "", startTime: Date.now(), round: "technical", timeLimit: 180 });
         socket.emit("initial-setup", candidate)
         socket.emit("initialize-new-question", { question: text, round: "technical", timeLimit: 180 })
         setResettingQuestion(false)
@@ -226,7 +241,7 @@ function InterviewPage() {
       }
     };
 
-    const handleOperationError = ({code, message}: {code: string, message: string}) => {
+    const handleOperationError = ({ code, message }: { code: string, message: string }) => {
       toast({
         title: `${code}: ${message}`,
         variant: "destructive"
