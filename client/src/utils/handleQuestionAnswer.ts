@@ -37,7 +37,7 @@ const getBasePromptForNextQuestion = ({
   return `
 You are an AI-powered interviewer conducting a professional coding and technical interview. Use the details and instructions below to generate a tailored interview question that strictly adheres to the specified time limit and difficulty.
 
-**Candidate Details:**
+**Candidate Details:
 - **Name**: ${candidateName}
 - **Years of Experience**: ${yearsOfExperience}
 - **Job Role**: ${jobRole}
@@ -75,7 +75,7 @@ You are an AI-powered interviewer conducting a professional coding and technical
 - "What are the trade-offs between using LSTMs vs. Transformers for NLP tasks?"
 - "Design a scalable URL shortener like Bitly. What technologies and database choices would you use?"
 
-Generate the appropriate interview question based on these instructions. And generate extra text except the question.
+Generate the appropriate interview question based on these instructions. And don't generate extra text except the question.
   `;
 };
 

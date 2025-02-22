@@ -226,13 +226,22 @@ function InterviewPage() {
       }
     };
 
+    const handleOperationError = ({code, message}: {code: string, message: string}) => {
+      toast({
+        title: `${code}: ${message}`,
+        variant: "destructive"
+      })
+    }
+
     socket.on("connect", handleConnect);
+    socket.on("operation-error", handleOperationError);
     socket.on("interview-analytics", handleInterviewAnalyticsData);
     socket.on("disconnect", handleDisconnect);
     socket.on("connect_error", handleConnectError);
 
     return () => {
       socket.off("connect", handleConnect);
+      socket.off("operation-error", handleOperationError);
       socket.off("interview-analytics", handleInterviewAnalyticsData);
       socket.off("disconnect", handleDisconnect);
       socket.off("connect_error", handleConnectError);

@@ -10,7 +10,7 @@ const navLinks = [
 ];
 
 function Header() {
-  const { isLoaded } = useAuth();
+  const { isLoaded, isSignedIn } = useAuth();
 
   return (
     <>
@@ -33,7 +33,7 @@ function Header() {
         </ul>
         <div className="flex gap-4">
           <ThemeToggler />
-          {isLoaded ? <UserButton /> : <Loader2 className="w-5 h-5 animate-spin" />}
+          {(isLoaded && isSignedIn) ? <UserButton /> : (isLoaded ? <Link className="bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-800 dark:hover:text-zinc-200 px-3 py-1 rounded-sm transition-colors" to="/auth/signin">Sign in</Link> : <Loader2 className="w-5 h-5 animate-spin" />)}
         </div>
       </nav>
       <div className="h-16"></div>

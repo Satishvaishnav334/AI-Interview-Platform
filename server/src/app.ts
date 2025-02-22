@@ -294,6 +294,7 @@ io.on("connection", (socket) => {
           session.questions[i].correctAnswer = feedback.correctAnswer;
         })
       }
+      console.log(runningInterviewSession.get(socket.id)?.questions)
     } catch (error) {
       handleSocketError(socket, error);
     }
