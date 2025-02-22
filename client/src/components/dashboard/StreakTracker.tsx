@@ -1,51 +1,39 @@
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { InterviewSession } from "@/types/InterviewData";
+import { getDateAndDay } from "@/utils/formatTime";
 
 const MAX_STREAK = 10; // Maximum streak count for a full circle
 
-const StreakCircle: React.FC = () => {
-    const [streak, setStreak] = useState<number>(0);
-    const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+const StreakCircle = ({ interviewSessions }: { interviewSessions: InterviewSession[] }) => {
 
-    // Load streak from LocalStorage
-    useEffect(() => {
-        const savedStreak = localStorage.getItem("streak");
-        const savedDate = localStorage.getItem("lastUpdated");
-
-        if (savedStreak && savedDate) {
-            const lastDate = new Date(savedDate);
-            const today = new Date();
-
-            if (today.toDateString() === lastDate.toDateString()) {
-                setStreak(parseInt(savedStreak, 10));
-            } else if (
-                today.getDate() - lastDate.getDate() === 1 &&
-                today.getMonth() === lastDate.getMonth() &&
-                today.getFullYear() === lastDate.getFullYear()
-            ) {
-                setStreak(parseInt(savedStreak, 10));
-            } else {
-                setStreak(0); // Reset streak if a day is missed
-            }
+    const getStreak = () => {
+        if (!interviewSessions || interviewSessions?.length === 0) {
+            return 0;
         }
-        setLastUpdated(new Date());
-    }, []);
 
-    // Function to increment the streak
-    const increaseStreak = () => {
-        const newStreak = streak + 1;
-        setStreak(newStreak);
-        setLastUpdated(new Date());
-
-        localStorage.setItem("streak", newStreak.toString());
-        localStorage.setItem("lastUpdated", new Date().toISOString());
+        let currentStreak = 0;
+        let lastDate = null;
+        for (let i = 0; i < interviewSessions.length; i++) {
+            const session = interviewSessions[i];
+            const sessionDate = new Date(session.startTime);
+            if (lastDate && sessionDate.getDate() === lastDate.getDate()) {
+                currentStreak++;
+                if (currentStreak === MAX_STREAK) {
+                    return MAX_STREAK;
+                }
+            } else {
+                currentStreak = 1;
+            }
+            lastDate = sessionDate;
+        }
+        return currentStreak;
     };
 
     return (
-        <Card className="w-7/12 max-w-sm mx-auto p-4 text-center dark:bg-[#212121] ml-2">
+        <Card className="w-7/12 max-w-sm mx-auto p-4 text-center bg-zinc-200 dark:bg-zinc-800 ml-2">
             <h1 className="text-3xl font-bold rounded-xl py-3  w-full text-center">
-  Streak Track
-</h1>
+                Streak Track
+            </h1>
 
             <CardHeader>
                 <CardTitle>Streak Tracker</CardTitle>
@@ -65,17 +53,22 @@ const StreakCircle: React.FC = () => {
                             fill="none"
                             stroke="currentColor"
                             strokeDasharray="251.2"
-                            strokeDashoffset={251.2 - (streak / MAX_STREAK) * 251.2}
+                            strokeDashoffset={251.2 - (getStreak() / MAX_STREAK) * 251.2}
                             strokeLinecap="round"
                             className="stroke-[#f59e0b] transition-all duration-500 ease-in-out"
                         />
                     </svg>
 
                     {/* Streak Count in the Center */}
-                    <span className="absolute text-3xl font-bold text-[#f59e0b] ">{streak}</span>
+                    <span className="absolute text-3xl font-bold text-[#f59e0b] ">{getStreak()}</span>
                 </div>
 
-                
+                <div className="py-6 space-y-2">
+                    {interviewSessions && interviewSessions.sort((a, b) => b.startTime - a.startTime).map((session, index) => (
+                        <p key={index}>{getDateAndDay(session.startTime)}</p>
+                    ))}
+                </div>
+
             </CardContent>
         </Card>
     );

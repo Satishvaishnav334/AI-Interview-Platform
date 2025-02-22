@@ -103,7 +103,7 @@ const getAllSessions = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Email id is required" });
   }
 
-  const response = await SessionModel.findOne({ candidate: email });
+  const response = await SessionModel.find({ candidate: email });
 
   if (!response) {
     res.status(404).json({ error: "Interview data not found" });

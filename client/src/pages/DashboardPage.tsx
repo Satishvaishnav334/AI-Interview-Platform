@@ -4,10 +4,13 @@ import StreakTracker from "@/components/dashboard/StreakTracker";
 import SessionInfoForm, { formSchema } from "@/components/interview/SessionInfoForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useInterviewStore from "@/store/interviewStore";
-import { JobRoleType } from "@/types/InterviewData";
+import { InterviewSession, JobRoleType } from "@/types/InterviewData";
 import { useUser } from "@clerk/clerk-react";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
+import axios from "axios";
 
 const roles = [
   {
@@ -32,10 +35,43 @@ const roles = [
 
 function DashboardPage() {
 
+  const [interviewSessions, setInterviewSessions] = useState<null | InterviewSession[]>(null)
+
   const navigate = useNavigate()
   const { setCandidate } = useInterviewStore()
 
   const user = useUser().user
+
+  useEffect(() => {
+    async function getData() {
+      try {
+        if (!user || !user.primaryEmailAddress?.emailAddress) {
+          throw new Error("No user found")
+        }
+
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/all/${user.primaryEmailAddress.emailAddress}`, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+
+        if (!res.status || res.status !== 200) {
+          throw new Error("Something went wrong")
+        }
+        console.log(res.data.response)
+        setInterviewSessions(res.data.response)
+
+      } catch (error) {
+        toast({
+          title: "Something went wrong",
+          variant: "destructive"
+        })
+        console.log(error)
+      }
+    }
+
+    getData()
+  }, [user])
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setCandidate({
@@ -77,7 +113,10 @@ function DashboardPage() {
         </h1>
         <div className="flex justify-between">
           <DataVisualization />
-          <StreakTracker />
+          {(interviewSessions && interviewSessions.length) ? <StreakTracker interviewSessions={interviewSessions} /> : <div className="space-y-2 pt-4">
+            <div className="w-7/12 max-w-sm mx-auto p-4 text-center bg-zinc-200 dark:bg-zinc-800 ml-2"></div>
+          </div>
+          }
         </div>
       </Container>
     </div>

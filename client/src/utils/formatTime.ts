@@ -45,4 +45,17 @@ function formatTimeInShortWords(milliseconds: number): string {
   return result.trim(); // Remove trailing space if any
 }
 
-export { formatTimeInFullWords, formatTimeInShortWords };
+function getDateAndDay(timestamp: number) {
+  if (!timestamp || isNaN(timestamp)) {
+    return "Invalid timestamp";
+  }
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  });
+}
+
+export { formatTimeInFullWords, formatTimeInShortWords, getDateAndDay };

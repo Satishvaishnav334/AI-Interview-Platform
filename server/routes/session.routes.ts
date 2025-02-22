@@ -13,6 +13,6 @@ const router = Router()
 router.route('/').post(createSession).delete(deleteSession)
 router.route('/data/:socketId').get(getSessionData)
 router.route('/:userId').get(getSession).patch(updateSession)
-router.route('/all/:userId').get(getAllSessions)
+router.route('/all/:email').get(getAllSessions)
 
 export default router;

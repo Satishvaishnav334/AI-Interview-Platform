@@ -61,7 +61,7 @@ const AnalyticsPage: React.FC = () => {
       }
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions//data/${socketId}`, {
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/data/${socketId}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -89,6 +89,7 @@ const AnalyticsPage: React.FC = () => {
 
     }
     fetchSessionData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
