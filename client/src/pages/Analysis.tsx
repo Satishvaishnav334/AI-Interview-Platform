@@ -320,12 +320,12 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
         {expressions && <TimelineChart expressions={expressions} />}
       </div>
 
-      <div className="max-w-5xl py-12 mx-auto">
+      <div className="max-w-5xl py-12 mx-auto text-base">
         <Accordion type="single" defaultValue={analyticsData?.questions[0]?.question} collapsible>
           {analyticsData?.questions.map(({ answer, answerReview, score, correctAnswer, startTime, endTime, round, question, code, faceExpressions }, index) => (
             <AccordionItem key={startTime} value={question}>
-              <AccordionTrigger>Q{index + 1} - {question} ({round})</AccordionTrigger>
-              <AccordionContent>
+              <AccordionTrigger className="text-base">Q{index + 1} - {question} ({round})</AccordionTrigger>
+              <AccordionContent className="text-base">
                 {score > 5 ?
                   <p className="bg-green-500/60 p-4 rounded">
                     Your answer is correct: {answer}
@@ -340,12 +340,12 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
                     </p>
                   </>
                 }
-                <p className="bg-zinc-800/70 p-4 rounded">Answer Review: {answerReview}</p>
+                <p className="bg-zinc-200/70 dark:bg-zinc-800/70 p-4 rounded">Answer Review: {answerReview}</p>
                 {code && code.map(({ code, language }, index) => (
                   <div className="bg-zinc-800/70 rounded-md m-4 relative min-h-16">
                     <div className="absolute right-4 top-4 flex space-x-2">
-                      <span className="py-1.5 px-2.5 bg-zinc-700/70 rounded-sm">Attempt {index + 1 < 9 ? `0${index + 1}` : index + 1}</span>
-                      <span className="py-1.5 px-2.5 bg-zinc-700/70 rounded-sm">{language}</span>
+                      <span className="py-1.5 px-2.5 bg-zinc-300/70 dark:bg-zinc-700/70 rounded-sm">Attempt {index + 1 < 9 ? `0${index + 1}` : index + 1}</span>
+                      <span className="py-1.5 px-2.5 bg-zinc-300/70 dark:bg-zinc-700/70 rounded-sm">{language}</span>
                       <CopyButton content={code} />
                     </div>
                     <section className="p-4">
@@ -353,18 +353,18 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
                     </section>
                   </div>
                 ))}
-                <div className="flex justify-evenly items-center bg-zinc-800/70 py-6">
+                <div className="flex justify-evenly items-center border-t-2 border-zinc-300 dark:border-zinc-700 bg-zinc-200/70 dark:bg-zinc-800/70 py-6">
                   <div className="flex flex-col justify-center items-center">
                     <p className="font-semibold text-xl">{formatTimeInShortWords((endTime || Date.now()) - startTime)}</p>
-                    <p className="text-sm text-zinc-400">Time Spent</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Time Spent</p>
                   </div>
                   <div className="flex flex-col justify-center items-center">
                     <p className="font-semibold text-xl">{getMostCommonExpression(faceExpressions)}</p>
-                    <p className="text-sm text-zinc-400">Most common face expression</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Most common face expression</p>
                   </div>
                   <div className="flex flex-col justify-center items-center">
                     <p className="font-semibold text-xl">{score}/10</p>
-                    <p className="text-sm text-zinc-400">Score</p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">Score</p>
                   </div>
                 </div>
               </AccordionContent>

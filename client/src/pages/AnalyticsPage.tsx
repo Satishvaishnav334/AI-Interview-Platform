@@ -37,6 +37,14 @@ const AnalyticsPage: React.FC = () => {
     ],
   };
 
+  const getAverageScore = () => {
+    if (analyticsData) {
+      const totalScore = analyticsData.questions.reduce((acc, question) => acc + question.score, 0);
+      return Math.round(totalScore / analyticsData.questions.length);
+    }
+    return 0
+  }
+
   useEffect(() => {
     const fetchSessionData = async () => {
 
@@ -95,7 +103,7 @@ const AnalyticsPage: React.FC = () => {
         :
         <>
           <AnalysisComponent userData={userData} analyticsData={analyticsData} />
-          <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={85} />
+          <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={getAverageScore()*10} />
         </>}
     </div>
   );
