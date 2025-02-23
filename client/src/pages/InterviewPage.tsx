@@ -374,20 +374,20 @@ function InterviewPage() {
             />
             <Webcam height={480} width={480} videoHeight={580} videoWidth={580} questionAnswerIndex={currentQuestionIndex} />
             {/* transcript chatbox */}
-            {transcript && (
-              <div className="mt-2 text-sm rounded-xl bg-blue-800 italic text-gray-400 dark:text-gray-400">
-                {[...transcript
-                  .split(/\r?\n/)
-                  .filter(line => line.trim() !== "")
-                  .reverse()]
-                  .slice(1, 2)
-                  .reverse()
-                  .map((line, index) => (
-                    <p key={index}>{line}</p>
-                  ))}
-              </div>
-            )}
           </div>
+          {transcript && (
+            <div className="mt-2 text-sm flex justify-center items-center rounded-xl italic text-gray-600 dark:text-gray-400">
+              {[...transcript
+                .split(/\r?\n/)
+                .filter(line => line.trim() !== "")
+                .reverse()]
+                .slice(0, 2)  // Changed from slice(1, 2) to get last two lines
+                .reverse()
+                .map((line, index) => (
+                  <p className="w-96" key={index}>{line}</p>
+                ))}
+            </div>
+          )}
         </div>
       }
       {resettingQuestion &&

@@ -45,6 +45,6 @@ export function useAutoSpeechRecognizer(questionAnswerIndex: number) {
   }, [questionAnswerIndex, browserSupportsSpeechRecognition, resetTranscript]);
 
   const combinedTranscript = storedTranscript + transcript;
-
+  console.log(combinedTranscript)
   return { transcript: combinedTranscript };
 }
