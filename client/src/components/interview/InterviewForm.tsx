@@ -17,7 +17,7 @@ const InterviewForm = () => {
     linkedin: "",
     higherEducation: "",
     college: "",
-    jobRole: "",
+    currentJobRole: "",
     achievements: "",
     github: "",
   });
@@ -42,7 +42,7 @@ const InterviewForm = () => {
         linkedin: formData.linkedin,
         higherEducation: formData.higherEducation,
         college: formData.college,
-        jobRole: formData.jobRole,
+        jobRole: formData.currentJobRole,
         achievements: formData.achievements,
         github: formData.github,
       }
@@ -134,10 +134,10 @@ const InterviewForm = () => {
           />
           <Input
             type="text"
-            name="jobRole"
-            value={formData.jobRole}
+            name="currentJobRole"
+            value={formData.currentJobRole}
             onChange={handleChange}
-            placeholder="Enter your job role (e.g. Software Developer) if any or leave it blank"
+            placeholder="Enter your current job role (e.g. Software Developer) if any or leave it blank"
             className="w-full border bg-zinc-100/70 dark:bg-zinc-700/70 rounded-lg !text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />

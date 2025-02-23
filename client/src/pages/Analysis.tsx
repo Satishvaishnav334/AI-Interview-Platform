@@ -1,5 +1,5 @@
 import { FaceExpression, InterviewSession } from "@/types/InterviewData";
-import { FaUser, FaPhone, FaLinkedin, FaGraduationCap, FaBriefcase, FaBullseye } from "react-icons/fa";
+import { FaUser, FaPhone, FaLinkedin, FaGraduationCap, FaBriefcase, FaGithub } from "react-icons/fa";
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, XAxis, YAxis } from "recharts"
 import {
@@ -26,25 +26,10 @@ import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from "recharts"
 import TimelineChart from "@/components/charts/TimelineChart";
 import CopyButton from "@/components/general/CopyButton";
 import { formatTimeInShortWords } from "@/utils/formatTime";
-
-interface Skill {
-  name: string;
-  level: number;
-}
-
-interface UserData {
-  name: string;
-  phone: string;
-  linkedin: string;
-  higherEducation: string;
-  jobRole: string;
-  goals: string;
-  skills: Skill[];
-}
+import useProfileStore from "@/store/profileStore";
 
 // Update the AnalysisComponent props to use the UserData interface
 interface AnalysisComponentProps {
-  userData: UserData;
   analyticsData: InterviewSession | null
 }
 
@@ -58,7 +43,9 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) => {
+const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
+
+  const { profile } = useProfileStore()
 
   const skillLevel = analyticsData?.questions.map(({ score, round }) => (
     {
@@ -120,39 +107,41 @@ const AnalysisComponent = ({ userData, analyticsData }: AnalysisComponentProps) 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
           <FaUser className="text-blue-500" />
           <span className="font-semibold">Full Name:</span>
-          <p className="text-gray-700 dark:text-gray-300">{userData.name}</p>
+          <p className="text-gray-700 dark:text-gray-300">{profile.name}</p>
         </div>
 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
           <FaPhone className="text-blue-500" />
           <span className="font-semibold">Phone:</span>
-          <p className="text-gray-700 dark:text-gray-300">{userData.phone}</p>
+          <p className="text-gray-700 dark:text-gray-300">{profile.phone}</p>
         </div>
 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
           <FaLinkedin className="text-blue-500" />
           <span className="font-semibold">LinkedIn:</span>
-          <a href={userData.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-            {userData.linkedin}
+          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            {profile.linkedin}
           </a>
         </div>
 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
           <FaGraduationCap className="text-blue-500" />
           <span className="font-semibold">Education:</span>
-          <p className="text-gray-700 dark:text-gray-300">{userData.higherEducation}</p>
+          <p className="text-gray-700 dark:text-gray-300">{profile.higherEducation}</p>
         </div>
 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
           <FaBriefcase className="text-blue-500" />
           <span className="font-semibold">Job Role:</span>
-          <p className="text-gray-700 dark:text-gray-300">{userData.jobRole}</p>
+          <p className="text-gray-700 dark:text-gray-300">{profile.currentJobRole}</p>
         </div>
 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
-          <FaBullseye className="text-blue-500" />
-          <span className="font-semibold">Career Goals:</span>
-          <p className="text-gray-700 dark:text-gray-300">{userData.goals}</p>
+          <FaGithub className="text-blue-500" />
+          <span className="font-semibold">Github:</span>
+          <a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+            {profile.github}
+          </a>
         </div>
       </div>
 

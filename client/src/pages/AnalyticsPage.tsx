@@ -16,26 +16,7 @@ const AnalyticsPage: React.FC = () => {
   const user = useUser().user
 
   const [analyticsData, setAnalyticsData] = useState<null | InterviewSession>(null)
-  // const [fetchingAnalyticsData, setFetchingAnalyticsData] = useState(false)
   const [fetchingAnalyticsData, setFetchingAnalyticsData] = useState(true)
-
-  const userData = {
-    name: user?.firstName || "Not found",
-    phone: user?.primaryPhoneNumber?.phoneNumber || user?.phoneNumbers[0]?.phoneNumber || "Not found",
-    linkedin: "https://linkedin.com/in/johndoe",
-    higherEducation: "Master's in Computer Science",
-    jobRole: "Full Stack Developer",
-    experience: 5,
-    achievements: ["Best Developer Award", "Hackathon Winner", "Employee of the Year"],
-    projects: ["E-commerce App", "AI Chatbot", "Portfolio Website"],
-    goals: "Become a CTO in 5 years",
-    skills: [
-      { name: "Aptitude", level: 85 },
-      { name: "System Design", level: 90 },
-      { name: "Technical", level: 80 },
-      { name: "Behavioral", level: 75 },
-    ],
-  };
 
   const getAverageScore = () => {
     if (analyticsData) {
@@ -103,7 +84,7 @@ const AnalyticsPage: React.FC = () => {
         </div>
         :
         <>
-          <AnalysisComponent userData={userData} analyticsData={analyticsData} />
+          <AnalysisComponent analyticsData={analyticsData} />
           <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={getAverageScore()*10} />
         </>}
     </div>

@@ -15,11 +15,13 @@ import { useNavigate } from "react-router-dom";
 import Avatar3D from "@/components/general/Avatar3D"
 import Avatar3DVariant from "@/components/general/Avatar3DVariant"
 import axios from "axios";
+import useProfileStore from "@/store/profileStore";
 
 function InterviewPage() {
 
   const socket = useSocket()
   const { setSocketId } = useSocketStore()
+  const { profile } = useProfileStore()
   const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer, addCodeAttempt } = useInterviewStore()
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -42,6 +44,9 @@ function InterviewPage() {
       round: roundAndTimeLimit.round,
       timeLimit: roundAndTimeLimit.timeLimit,
       previousAnswer: transcribedText,
+      college: profile.college,
+      achievements: profile.achievements,
+      higherEducation: profile.higherEducation
     };
 
     // Timeout after 10 seconds if API is slow

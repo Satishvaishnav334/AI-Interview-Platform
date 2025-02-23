@@ -23,6 +23,9 @@ export type candidateAnswerDetailType = {
   round: RoundType;
   timeLimit: number;
   previousAnswer: string;
+  college: string;
+  achievements: string;
+  higherEducation: string;
 } & candidateDetailsType;
 
 const getBasePromptForNextQuestion = ({
@@ -33,6 +36,9 @@ const getBasePromptForNextQuestion = ({
   round,
   timeLimit,
   previousAnswer,
+  college,
+  achievements,
+  higherEducation,
 }: candidateAnswerDetailType) => {
   return `
 You are an AI-powered interviewer conducting a professional coding and technical interview. Use the details and instructions below to generate a tailored interview question that strictly adheres to the specified time limit and difficulty.
@@ -45,6 +51,9 @@ You are an AI-powered interviewer conducting a professional coding and technical
 - **Current Round**: ${round} (e.g., Screening, Technical, System Design, Behavioral)
 - **Time Limit**: ${timeLimit} seconds
 - **Previous Answer**: ${previousAnswer} (if any)
+- **College**: ${college}
+- **Achievements**: ${achievements}
+- **Higher Education**: ${higherEducation}
 
 **Instructions:**
 1. **Time Limit Enforcement:**  
