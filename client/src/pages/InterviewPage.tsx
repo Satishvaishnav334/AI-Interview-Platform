@@ -381,7 +381,7 @@ function InterviewPage() {
                 .split(/\r?\n/)
                 .filter(line => line.trim() !== "")
                 .reverse()]
-                .slice(0, 2)  // Changed from slice(1, 2) to get last two lines
+                .slice(0, 2)
                 .reverse()
                 .map((line, index) => (
                   <p className="w-96" key={index}>{line}</p>
