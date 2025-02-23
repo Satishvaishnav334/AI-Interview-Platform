@@ -68,7 +68,7 @@ ${currentJobRole && `- **Current Job Role**: ${currentJobRole}`}
    - If \`${yearsOfExperience} > 5\`: Ask an **advanced** or **architectural** question.
 
 3. **Interview Round Specifics:**
-   - **Technical (Coding)**: Pose a pure coding problem in one of Java, JavaScript, C++ or Python on based on the candidate's skills. *(Time Limit: 3 minutes)*
+   - **Technical (Coding)**: Pose a pure coding problem in one of Java, JavaScript, C++ or Python on based on the candidate's skills. but note that currently only Java, JavaScript, React, C++ and Python are supported. *(Time Limit: 3 minutes)*
    - **Aptitude**: Pose an aptitude question. *(Time Limit: 1 minute)*
    - **System Design**: Pose a question focusing on architecture, scalability, and best practices. *(Time Limit: 3 minutes)*
    - **Behavioral**: Pose a situational or STAR-based question. *(Time Limit: 1 minute)*

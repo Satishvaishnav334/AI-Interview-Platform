@@ -15,20 +15,20 @@ import useProfileStore from "@/store/profileStore";
 
 const roles = [
   {
-    title: "Frontend Developer",
-    skills: ["express", "react", "API handling"],
+    title: "React Developer",
+    skills: ["react", "API handling", "JavaScript", "HTML", "CSS"],
     description:
-      "A Frontend Developer should be proficient in HTML, CSS, and JavaScript, along with frameworks.",
+      "A React Developer should be proficient in HTML, CSS, and JavaScript, along with frameworks.",
   },
   {
-    title: "Backend Developer",
-    skills: ["nodejs"],
+    title: "NodeJS Developer",
+    skills: ["nodejs", "express", "API handling", "Mongodb", "SQL", "Schema designing", "RESTful APIs"],
     description:
-      "A MERN Stack Developer must have expertise in MongoDB, Express.js, React, and Node.js, along with RESTful APIs.",
+      "A NodeJS Stack Developer must have expertise in MongoDB, Express.js and Node.js, along with RESTful APIs.",
   },
   {
-    title: "MERN Stack Developer",
-    skills: ["react"],
+    title: "Java Developer",
+    skills: ["Java", "Spring Boot", "Hibernate", "SQL"],
     description:
       "A Java Developer should be skilled in Java, Spring Boot, Hibernate, and database management using SQL.",
   },
