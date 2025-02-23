@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useSocketStore from "@/store/socketStore";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
-import { InterviewSession } from "@/types/InterviewData";
+import { InterviewSessionData } from "@/types/InterviewData";
 import { Loader2 } from "lucide-react";
 import { IoMdArrowBack } from "react-icons/io";
 
@@ -16,7 +16,7 @@ const AnalyticsPage: React.FC = () => {
   const { socketId } = useSocketStore()
   const user = useUser().user
 
-  const [analyticsData, setAnalyticsData] = useState<null | InterviewSession>(null)
+  const [analyticsData, setAnalyticsData] = useState<null | InterviewSessionData>(null)
   const [fetchingAnalyticsData, setFetchingAnalyticsData] = useState(true)
 
   const getAverageScore = () => {

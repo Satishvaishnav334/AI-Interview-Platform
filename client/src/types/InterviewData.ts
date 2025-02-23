@@ -1,12 +1,17 @@
 import { z } from "zod";
 
-export type RoundType = "aptitude" | "technical" | "behavioral" | "system-design" | "end";
+export type RoundType =
+  | "aptitude"
+  | "technical"
+  | "behavioral"
+  | "system-design"
+  | "end";
 
 export type QuestionAnswerType = {
   question: string;
   answer: string | string[];
   startTime: number;
-  code?: { code: string; language: string }[]
+  code?: { code: string; language: string }[];
   round: RoundType;
   timeLimit: number;
 };
@@ -28,7 +33,7 @@ export const jobRoleSchema = z.enum([
 export type FaceExpressionType = {
   expressionState: string;
   timeStamp: number;
-}
+};
 
 export type JobRoleType = z.infer<typeof jobRoleSchema>;
 
@@ -69,6 +74,7 @@ export type GazeTracking = {
 };
 
 export type InterviewSession = {
+  _id: string;
   sessionId: string;
   candidate: {
     email: string;
@@ -82,4 +88,16 @@ export type InterviewSession = {
   endTime: number | null;
   currentQuestionIndex: number;
   status: "pending" | "active" | "completed";
+};
+
+export type InterviewSessionData = {
+  _id: string
+  candidate: string
+  startTime: number
+  endTime: number
+  skills: string[]
+  userId: string
+  jobRole: string
+  yearsOfExperience: number
+  questions: QuestionSchema[]
 };

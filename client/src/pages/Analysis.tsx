@@ -1,4 +1,4 @@
-import { FaceExpression, InterviewSession } from "@/types/InterviewData";
+import { FaceExpression, InterviewSessionData } from "@/types/InterviewData";
 import { FaUser, FaPhone, FaLinkedin, FaGraduationCap, FaBriefcase, FaGithub } from "react-icons/fa";
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, XAxis, YAxis } from "recharts"
@@ -30,7 +30,7 @@ import useProfileStore from "@/store/profileStore";
 
 // Update the AnalysisComponent props to use the UserData interface
 interface AnalysisComponentProps {
-  analyticsData: InterviewSession | null
+  analyticsData: InterviewSessionData | null
 }
 
 const chartConfig = {

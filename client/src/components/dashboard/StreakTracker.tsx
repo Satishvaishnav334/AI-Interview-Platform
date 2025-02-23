@@ -1,11 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { InterviewSession } from "@/types/InterviewData";
+import { InterviewSessionData } from "@/types/InterviewData";
 import { getDateAndDay } from "@/utils/formatTime";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const MAX_STREAK = 10; // Maximum streak count for a full circle
 
-const StreakCircle = ({ interviewSessions }: { interviewSessions: InterviewSession[] }) => {
+const StreakCircle = ({ interviewSessions }: { interviewSessions: InterviewSessionData[] }) => {
 
     const getStreak = () => {
         if (!interviewSessions || interviewSessions.length === 0) {
