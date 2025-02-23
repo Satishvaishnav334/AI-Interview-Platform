@@ -25,6 +25,7 @@ export type candidateAnswerDetailType = {
   previousAnswer: string;
   college: string;
   achievements: string;
+  currentJobRole: string | null;
   higherEducation: string;
 } & candidateDetailsType;
 
@@ -37,6 +38,7 @@ const getBasePromptForNextQuestion = ({
   timeLimit,
   previousAnswer,
   college,
+  currentJobRole,
   achievements,
   higherEducation,
 }: candidateAnswerDetailType) => {
@@ -52,6 +54,7 @@ You are an AI-powered interviewer conducting a professional coding and technical
 - **Time Limit**: ${timeLimit} seconds
 - **Previous Answer**: ${previousAnswer} (if any)
 - **College**: ${college}
+${currentJobRole && `- **Current Job Role**: ${currentJobRole}`}
 - **Achievements**: ${achievements}
 - **Higher Education**: ${higherEducation}
 

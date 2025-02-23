@@ -42,7 +42,7 @@ const InterviewForm = () => {
         linkedin: formData.linkedin,
         higherEducation: formData.higherEducation,
         college: formData.college,
-        jobRole: formData.currentJobRole,
+        jobRole: formData.currentJobRole || null,
         achievements: formData.achievements,
         github: formData.github,
       }
@@ -139,7 +139,6 @@ const InterviewForm = () => {
             onChange={handleChange}
             placeholder="Enter your current job role (e.g. Software Developer) if any or leave it blank"
             className="w-full border bg-zinc-100/70 dark:bg-zinc-700/70 rounded-lg !text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
           />
           <Input
             type="url"

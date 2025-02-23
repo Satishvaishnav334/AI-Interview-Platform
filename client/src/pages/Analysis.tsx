@@ -120,7 +120,7 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
           <FaLinkedin className="text-blue-500" />
           <span className="font-semibold">LinkedIn:</span>
           <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-            {profile.linkedin}
+            {profile.linkedin.includes("?") ? profile.linkedin.split("?")[0] : profile.linkedin}
           </a>
         </div>
 
@@ -133,7 +133,7 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">
           <FaBriefcase className="text-blue-500" />
           <span className="font-semibold">Job Role:</span>
-          <p className="text-gray-700 dark:text-gray-300">{profile.currentJobRole}</p>
+          <p className="text-gray-700 dark:text-gray-300">{profile.currentJobRole || "Unemployed"}</p>
         </div>
 
         <div className="p-4 border rounded-xl shadow-md bg-gray-50 dark:bg-gray-800 flex items-center gap-2">

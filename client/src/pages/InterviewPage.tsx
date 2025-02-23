@@ -46,6 +46,7 @@ function InterviewPage() {
       previousAnswer: transcribedText,
       college: profile.college,
       achievements: profile.achievements,
+      currentJobRole: profile?.currentJobRole || null,
       higherEducation: profile.higherEducation
     };
 

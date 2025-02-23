@@ -10,7 +10,7 @@ type User = {
   achievements: string;
   linkedin: string;
   name: string;
-  currentJobRole: string;
+  currentJobRole?: string;
   phone: string;
   github: string
   theme: themeType;

@@ -281,7 +281,6 @@ io.on("connection", (socket) => {
   
   // Store question answer evaluated data
   socket.on("interview-evaluation", (feedback) => {
-    console.log(feedback)
     try {
       if (runningInterviewSession.has(socket.id)) {
         const session = runningInterviewSession.get(socket.id);
@@ -289,14 +288,11 @@ io.on("connection", (socket) => {
           throw new Error("Session not found");
         }
         feedback.map((f: any, i:number) => {
-          console.log(f.feedback)
           session.questions[i].answerReview = f.feedback;
           session.questions[i].score = f.score;
           session.questions[i].correctAnswer = f.correctAnswer;
-          console.log(session.questions[i])
         })
       }
-      console.log(runningInterviewSession.get(socket.id)?.questions)
     } catch (error) {
       handleSocketError(socket, error);
     }

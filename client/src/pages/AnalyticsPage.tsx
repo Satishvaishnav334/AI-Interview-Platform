@@ -2,7 +2,7 @@ import AnalysisComponent from "@/pages/Analysis";
 import React, { useEffect, useState } from "react";
 import Certificate from "../components/dashboard/Certificate";
 import { useUser } from "@clerk/clerk-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useSocketStore from "@/store/socketStore";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { IoMdArrowBack } from "react-icons/io";
 
 const AnalyticsPage: React.FC = () => {
 
+  const navigate = useNavigate()
   const { socketId } = useSocketStore()
   const user = useUser().user
 
@@ -38,6 +39,7 @@ const AnalyticsPage: React.FC = () => {
           title: "Socket id not found",
           variant: "destructive"
         })
+        navigate("/dashboard")
         return
       }
 
