@@ -9,8 +9,6 @@ const UserSchema = new mongoose.Schema(
     higherEducation: { type: String, trim: true },
     currentJobRole: { type: String, trim: true },
     college: { type: String, trim: true },
-    company: { type: String, trim: true },
-    experience: { type: Number, min: 0 }, // Assuming experience is in years
     achievements: { type: String, trim: true },
     project: { type: [String], default: [] }, // Array of project names or descriptions
   },

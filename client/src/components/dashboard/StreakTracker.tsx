@@ -7,25 +7,33 @@ const MAX_STREAK = 10; // Maximum streak count for a full circle
 const StreakCircle = ({ interviewSessions }: { interviewSessions: InterviewSession[] }) => {
 
     const getStreak = () => {
-        if (!interviewSessions || interviewSessions?.length === 0) {
+        if (!interviewSessions || interviewSessions.length === 0) {
             return 0;
         }
 
+        // Sort sessions by date
+        const sortedSessions = [...interviewSessions].sort(
+            (a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+        );
+
         let currentStreak = 0;
         let lastDate = null;
-        for (let i = 0; i < interviewSessions.length; i++) {
-            const session = interviewSessions[i];
+
+        for (const session of sortedSessions) {
             const sessionDate = new Date(session.startTime);
-            if (lastDate && sessionDate.getDate() === lastDate.getDate()) {
-                currentStreak++;
-                if (currentStreak === MAX_STREAK) {
-                    return MAX_STREAK;
+            sessionDate.setHours(0, 0, 0, 0); // Normalize to remove time differences
+
+            if (!lastDate || sessionDate.getTime() !== lastDate.getTime()) {
+                // If it's the next day, increase streak
+                if (lastDate && sessionDate.getTime() === lastDate.getTime() + 86400000) {
+                    currentStreak++;
+                } else {
+                    currentStreak = 1; // Reset streak if not consecutive
                 }
-            } else {
-                currentStreak = 1;
+                lastDate = sessionDate;
             }
-            lastDate = sessionDate;
         }
+
         return currentStreak;
     };
 
@@ -64,9 +72,21 @@ const StreakCircle = ({ interviewSessions }: { interviewSessions: InterviewSessi
                 </div>
 
                 <div className="py-6 space-y-2">
-                    {interviewSessions && interviewSessions.sort((a, b) => b.startTime - a.startTime).map((session, index) => (
-                        <p key={index}>{getDateAndDay(session.startTime)}</p>
-                    ))}
+                    {interviewSessions &&
+                        [...interviewSessions]
+                            .sort((a, b) => +new Date(b.startTime) - +new Date(a.startTime)) // Sort in descending order
+                            .reduce<string[]>((uniqueDates, session) => {
+                                const sessionDate = new Date(session.startTime).toDateString(); // Normalize to remove time
+                                if (!uniqueDates.includes(sessionDate)) {
+                                    uniqueDates.push(sessionDate); // Store only unique dates
+                                }
+                                return uniqueDates;
+                            }, [])
+                            .map((date, index) => {
+                                const dateObject = new Date(date);
+                                const timestamp = dateObject.getTime();
+                                return <p key={index}>{getDateAndDay(timestamp)}</p>;
+                            })}
                 </div>
 
             </CardContent>
