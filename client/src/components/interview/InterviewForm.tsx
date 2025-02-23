@@ -1,12 +1,15 @@
 import { toast } from "@/hooks/use-toast";
 import { useClerk } from "@clerk/clerk-react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { FormEvent, useState } from "react";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const InterviewForm = () => {
 
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
@@ -16,8 +19,7 @@ const InterviewForm = () => {
     college: "",
     jobRole: "",
     achievements: "",
-    skills: "",
-    projects: "",
+    github: "",
   });
 
   const user = useClerk().user
@@ -42,10 +44,9 @@ const InterviewForm = () => {
         college: formData.college,
         jobRole: formData.jobRole,
         achievements: formData.achievements,
-        skills: formData.skills,
-        projects: formData.projects,
+        github: formData.github,
       }
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URI}/api/v1/user`, data, {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URI}/api/v1/users`, data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -53,15 +54,21 @@ const InterviewForm = () => {
       });
 
       if (res.status === 201) {
-        {
-          toast({
-            title: "Form submitted successfully",
-          })
-        }
+        toast({
+          title: "Form submitted successfully",
+        })
+        navigate("/dashboard")
       }
 
     } catch (error) {
-      if (error instanceof Error) {
+      console.log(error)
+      if (error instanceof AxiosError) {
+        if(error.response?.status === 400 && error.response.data.error === "User with this email already exists") {
+          toast({
+            title: "You already filled this details"
+          })
+          navigate("/dashboard")
+        }
         toast({
           title: error.message,
         })
@@ -136,8 +143,8 @@ const InterviewForm = () => {
           />
           <Input
             type="url"
-            name="projects"
-            value={formData.projects}
+            name="github"
+            value={formData.github}
             onChange={handleChange}
             placeholder="GitHub repository URL"
             className="w-full border bg-zinc-100/70 dark:bg-zinc-700/70 rounded-lg !text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -158,7 +165,7 @@ const InterviewForm = () => {
             disabled={loading}
             className="w-full bg-blue-500 text-white py-2 rounded-lg shadow-md hover:bg-blue-600 transition"
           >
-            {loading ? "Submitting..." : "Submit"}
+            {loading ? <span className="flex justify-center items-center space-x-2"><Loader2 className="animate-spin" /> <span>Submitting...</span></span> : "Submit"}
           </button>
         </form>
       </div>

@@ -44,7 +44,7 @@ const router = createBrowserRouter([
             element: <DashboardPage />,
           },
           {
-            path: "form",
+            path: "user/form",
             element: <InterviewForm />,
           },
         ]

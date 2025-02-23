@@ -4,10 +4,14 @@ type profileOptions = "profile" | "settings" | "feedback";
 
 type User = {
   _id: string;
-  username: string;
   email: string;
-  fullName: string;
-  avatar: string;
+  higherEducation: string;
+  college: string;
+  achievements: string;
+  linkedin: string;
+  name: string;
+  phone: string;
+  github: string
   theme: themeType;
   createdAt: string;
   updatedAt: string;

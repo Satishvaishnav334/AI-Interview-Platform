@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import userModel from "../models/user.model";
+import { MongooseError } from "mongoose";
 
 const saveFormData = async (req: Request, res: Response) => {
   try {
@@ -12,8 +13,7 @@ const saveFormData = async (req: Request, res: Response) => {
       higherEducation,
       college,
       achievements,
-      skills,
-      projects,
+      github,
     } = req.body;
 
     // Check if any required field is missing or empty
@@ -40,8 +40,7 @@ const saveFormData = async (req: Request, res: Response) => {
       higherEducation,
       college,
       achievements,
-      skills,
-      projects,
+      github,
     });
 
     if (!newEntry) {
@@ -56,6 +55,10 @@ const saveFormData = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
     if (error instanceof Error) {
+      if (error.name === 'MongoServerError' && (error as any).code === 11000) {
+        res.status(400).json({ error: "User with this email already exists" });
+        return;
+      }
       res.status(500).json({ error: error.message || "Failed to submit form" });
     } else {
       res.status(500).json({ error: "Failed to submit form" });
@@ -65,8 +68,8 @@ const saveFormData = async (req: Request, res: Response) => {
 
 const getFormData = async (req: Request, res: Response) => {
   try {
-    const { email } = req.body;
-
+    const { email } = req.params;
+    
     if (!email) {
       res.status(400).json({ error: "Email is required" });
       return;

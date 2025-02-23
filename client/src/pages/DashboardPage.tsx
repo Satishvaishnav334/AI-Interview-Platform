@@ -10,7 +10,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import useProfileStore from "@/store/profileStore";
 
 const roles = [
   {
@@ -36,6 +37,8 @@ const roles = [
 function DashboardPage() {
 
   const [interviewSessions, setInterviewSessions] = useState<null | InterviewSession[]>(null)
+  const [isPending, setIsPending] = useState(true)
+  const { profile, setProfile } = useProfileStore()
 
   const navigate = useNavigate()
   const { setCandidate } = useInterviewStore()
@@ -43,35 +46,64 @@ function DashboardPage() {
   const user = useUser().user
 
   useEffect(() => {
-    async function getData() {
+    async function fetchData() {
       try {
+        if (!isPending) setIsPending(true)
+
         if (!user || !user.primaryEmailAddress?.emailAddress) {
           throw new Error("No user found")
         }
 
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/all/${user.primaryEmailAddress.emailAddress}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        const email = user.primaryEmailAddress.emailAddress;
+        const [sessionRes, userRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/all/${email}`, {
+            headers: { "Content-Type": "application/json" },
+          }),
+          axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/users/${email}`, {
+            headers: { "Content-Type": "application/json" },
+          }),
+        ]);
 
-        if (!res.status || res.status !== 200) {
+        if (!sessionRes.status || sessionRes.status !== 200) {
           throw new Error("Something went wrong")
         }
-        console.log(res.data.response)
-        setInterviewSessions(res.data.response)
+        setInterviewSessions(sessionRes.data.response)
+
+        if (!userRes.status || userRes.status !== 201) {
+          throw new Error("Something went wrong")
+        }
+        setProfile({ theme: profile.theme, ...userRes.data.data })
 
       } catch (error) {
+        if (error instanceof AxiosError && error.status === 400) {
+          navigate("/dashboard/user/form")
+          toast({
+            title: "Please fill out the form first",
+          })
+          return
+        }
         toast({
           title: "Something went wrong",
           variant: "destructive"
         })
         console.log(error)
+      } finally {
+        setIsPending(false)
       }
     }
 
-    getData()
-  }, [user])
+    fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+  
+    if (hour >= 5 && hour < 12) return "Good Morning";
+    if (hour >= 12 && hour < 17) return "Good Afternoon";
+    if (hour >= 17 && hour < 21) return "Good Evening";
+    return "Good Night";
+  };
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     setCandidate({
@@ -85,10 +117,18 @@ function DashboardPage() {
     navigate(`/interview/${Date.now()}`)
   }
 
+  if(isPending){
+    return <div className="h-full w-screen overflow-x-hidden py-12">
+      <div className="w-1/2 mx-auto my-2 py-2 rounded-xl bg-gradient-to-r to-blue-700 from-purple-800 dark:to-blue-700 dark:from-purple-800 flex justify-center items-center">
+        <p className="text-zinc-300 dark:text-zinc-300 font-semibold">Loading...</p>
+      </div>
+    </div>
+  }
+
   return (
     <div className="h-full w-screen overflow-x-hidden py-12 space-y-6">
       <div className="w-1/2 mx-auto my-2 py-2 rounded-xl bg-gradient-to-r to-blue-700 from-purple-800 flex justify-center items-center">
-        <p className="text-zinc-300 font-semibold"><Link to="/dashboard/form" className="text-zinc-100 font-semibold hover:underline">Visit form</Link> to get started</p>
+        <p className="text-zinc-300 font-semibold">{getGreeting()} {user?.firstName}, Welcome Back to your Dashboard</p>
       </div>
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">

@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema(
     currentJobRole: { type: String, trim: true },
     college: { type: String, trim: true },
     achievements: { type: String, trim: true },
-    project: { type: [String], default: [] }, // Array of project names or descriptions
+    github: { type: String, trim: true },
   },
   { timestamps: true }
 ); // Adds createdAt and updatedAt fields

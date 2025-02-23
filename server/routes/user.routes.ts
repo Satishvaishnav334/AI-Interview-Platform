@@ -6,6 +6,7 @@ import {
 
 const router = Router()
 
-router.route('/').post(saveFormData).get(getFormData)
+router.route('/').post(saveFormData)
+router.route('/:email').get(getFormData)
 
 export default router;

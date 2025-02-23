@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InterviewSession } from "@/types/InterviewData";
 import { getDateAndDay } from "@/utils/formatTime";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 const MAX_STREAK = 10; // Maximum streak count for a full circle
 
@@ -38,16 +39,29 @@ const StreakCircle = ({ interviewSessions }: { interviewSessions: InterviewSessi
     };
 
     return (
-        <Card className="w-7/12 max-w-sm mx-auto p-4 text-center bg-zinc-200 dark:bg-zinc-800 ml-2">
+        <Card className="w-7/12 max-w-sm mx-auto p-4 select-none text-center bg-zinc-200 dark:bg-zinc-800 ml-2">
             <h1 className="text-3xl font-bold rounded-xl py-3  w-full text-center">
                 Streak Track
             </h1>
+            <div className="space-x-2 pt-4 pb-6">
+                {getStreak() >= MAX_STREAK && Array.from({ length: Math.floor(getStreak() / 10) }, (_, index) => (
+                    <span key={index} className="text-3xl font-bold rounded-xl py-3  w-full text-center">
+                        🔥
+                    </span>
+                ))
+                }
+                <span className="text-3xl font-bold rounded-xl py-3 opacity-50 w-full text-center">
+                    🔥
+                </span>
+            </div>
 
-            <CardHeader>
-                <CardTitle>Streak Tracker</CardTitle>
-            </CardHeader>
+            <VisuallyHidden>
+                <CardHeader>
+                    <CardTitle>Streak Tracker</CardTitle>
+                </CardHeader>
+            </VisuallyHidden>
             <CardContent>
-                <div className="relative flex justify-center items-center w-40 h-40 mx-auto">
+                <div className="relative flex justify-center items-center w-40 h-40 pt-6 pb-4 mx-auto">
                     {/* SVG Circular Progress */}
                     <svg className="absolute w-full h-full rotate-[-90deg]" viewBox="0 0 100 100">
                         {/* Background Circle */}
