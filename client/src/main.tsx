@@ -14,6 +14,7 @@ import InterviewPage from './pages/InterviewPage'
 import InterviewLayout from './layouts/InterviewLayout'
 import InterviewForm from './components/interview/InterviewForm'
 import AnalyticsPage from './pages/AnalyticsPage'
+import AboutPage from './pages/Aboutpage'
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
@@ -45,6 +46,20 @@ const router = createBrowserRouter([
           },
           {
             path: "user/form",
+            element: <InterviewForm />,
+          },
+        ]
+      },
+      {
+        path: "aboutus",
+        element: <AppLayout />,
+        children: [
+          {
+            path: "",
+            element: <AboutPage />,
+          },
+          {
+            path: "form",
             element: <InterviewForm />,
           },
         ]
