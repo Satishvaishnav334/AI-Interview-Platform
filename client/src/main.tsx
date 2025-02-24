@@ -9,6 +9,7 @@ import SignUpPage from './pages/SignUpPage'
 import AuthLayout from './layouts/AuthLayout'
 import AppLayout from './layouts/AppLayout'
 import DashboardPage from './pages/DashboardPage'
+import AboutPage from "@/pages/AboutPage";
 import RootLayout from './layouts/RootLayout'
 import InterviewPage from './pages/InterviewPage'
 import InterviewLayout from './layouts/InterviewLayout'
@@ -45,6 +46,20 @@ const router = createBrowserRouter([
           },
           {
             path: "user/form",
+            element: <InterviewForm />,
+          },
+        ]
+      },
+      {
+        path: "aboutus",
+        element: <AppLayout />,
+        children: [
+          {
+            path: "",
+            element: <AboutPage />,
+          },
+          {
+            path: "form",
             element: <InterviewForm />,
           },
         ]
