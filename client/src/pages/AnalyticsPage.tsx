@@ -2,8 +2,7 @@ import AnalysisComponent from "@/pages/Analysis";
 import React, { useEffect, useState } from "react";
 import Certificate from "../components/dashboard/Certificate";
 import { useUser } from "@clerk/clerk-react";
-import { Link, useNavigate } from "react-router-dom";
-import useSocketStore from "@/store/socketStore";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 import { InterviewSessionData } from "@/types/InterviewData";
@@ -12,8 +11,8 @@ import { IoMdArrowBack } from "react-icons/io";
 
 const AnalyticsPage: React.FC = () => {
 
+  const { id } = useParams();
   const navigate = useNavigate()
-  const { socketId } = useSocketStore()
   const user = useUser().user
 
   const [analyticsData, setAnalyticsData] = useState<null | InterviewSessionData>(null)
@@ -31,10 +30,10 @@ const AnalyticsPage: React.FC = () => {
     const fetchSessionData = async () => {
 
       if (!fetchingAnalyticsData) {
-          setFetchingAnalyticsData(true)
+        setFetchingAnalyticsData(true)
       }
 
-      if (!socketId) {
+      if (!id) {
         toast({
           title: "Socket id not found",
           variant: "destructive"
@@ -44,7 +43,7 @@ const AnalyticsPage: React.FC = () => {
       }
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/data/${socketId}`, {
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/data/${id}`, {
           headers: {
             "Content-Type": "application/json",
           },
@@ -72,7 +71,7 @@ const AnalyticsPage: React.FC = () => {
 
     }
     fetchSessionData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -87,7 +86,7 @@ const AnalyticsPage: React.FC = () => {
         :
         <>
           <AnalysisComponent analyticsData={analyticsData} />
-          <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={getAverageScore()*10} />
+          <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={getAverageScore() * 10} />
         </>}
     </div>
   );
