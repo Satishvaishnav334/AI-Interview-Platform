@@ -7,7 +7,6 @@ import { toast } from "@/hooks/use-toast";
 import { useAutoSpeechRecognizer } from "@/hooks/useAutoSpeechRecognizer";
 import useSocket from "@/socket/useSocket";
 import useInterviewStore from "@/store/interviewStore";
-import useSocketStore from "@/store/socketStore";
 import { candidateDetailsType, generateFeedback, generateNextQuestion } from "@/utils/handleQuestionAnswer";
 import selectRoundAndTimeLimit from "@/utils/selectRoundAndTimeLimit";
 import { useEffect, useState } from "react";
@@ -20,7 +19,6 @@ import useProfileStore from "@/store/profileStore";
 function InterviewPage() {
 
   const socket = useSocket()
-  const { setSocketId } = useSocketStore()
   const { profile } = useProfileStore()
   const { candidate, questionAnswerSets, addQuestionAnswerSet, updateAnswer, addCodeAttempt } = useInterviewStore()
 
@@ -209,7 +207,7 @@ function InterviewPage() {
     }
 
     const handleConnect = () => {
-      setSocketId(socket.id || "");
+      toast({title: "Interview started"})
     };
 
     const handleInterviewAnalyticsData = async () => {
@@ -235,7 +233,6 @@ function InterviewPage() {
     }
 
     const handleDisconnect = () => {
-      setSocketId("");
       toast({ title: "You have been disconnected" });
     };
 
@@ -268,7 +265,7 @@ function InterviewPage() {
       socket.off("connect_error", handleConnectError);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [candidate, navigate, setSocketId]);
+  }, [candidate, navigate]);
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
