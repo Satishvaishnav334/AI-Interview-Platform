@@ -1,39 +1,41 @@
 import Container from "@/components/general/Container";
 import DataVisualization from "@/components/general/DataVisualization";
 import StreakTracker from "@/components/dashboard/StreakTracker";
-import SessionInfoForm, { formSchema } from "@/components/interview/SessionInfoForm";
+import SessionInfoForm from "@/components/interview/SessionInfoForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import useInterviewStore from "@/store/interviewStore";
 import { InterviewSessionData, JobRoleType } from "@/types/InterviewData";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
-import { z } from "zod";
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import axios, { AxiosError } from "axios";
 import useProfileStore from "@/store/profileStore";
 import { formatTimeInShortWords, getDateAndDay } from "@/utils/formatTime";
+import { Plus } from "lucide-react";
 
 const roles = [
   {
-    title: "React Developer",
-    skills: ["react", "API handling", "JavaScript", "HTML", "CSS"],
+    title: "Frontend Developer",
+    jobRole: "front-end" as JobRoleType,
+    skills: ["React", "JavaScript", "HTML", "CSS", "API Handling"],
     description:
-      "A React Developer should be proficient in HTML, CSS, and JavaScript, along with frameworks.",
+      "A Frontend Developer should be proficient in HTML, CSS, JavaScript, and modern frameworks like React.",
   },
   {
-    title: "NodeJS Developer",
-    skills: ["nodejs", "express", "API handling", "Mongodb", "SQL", "Schema designing", "RESTful APIs"],
+    title: "Backend Developer",
+    jobRole: "back-end" as JobRoleType,
+    skills: ["Node.js", "Express", "MongoDB", "SQL", "Schema Designing", "RESTful APIs"],
     description:
-      "A NodeJS Stack Developer must have expertise in MongoDB, Express.js and Node.js, along with RESTful APIs.",
+      "A Backend Developer must have expertise in Node.js, Express.js, MongoDB, SQL, and RESTful API development.",
   },
   {
-    title: "Java Developer",
-    skills: ["Java", "Spring Boot", "Hibernate", "SQL"],
+    title: "Full Stack Developer",
+    jobRole: "full-stack" as JobRoleType,
+    skills: ["React", "Node.js", "Express", "MongoDB", "SQL", "API Handling", "Spring Boot", "Hibernate"],
     description:
-      "A Java Developer should be skilled in Java, Spring Boot, Hibernate, and database management using SQL.",
+      "A Full Stack Developer should be proficient in both frontend and backend technologies, including React, Node.js, Express, databases, and frameworks like Spring Boot and Hibernate.",
   },
-]
+];
 
 function DashboardPage() {
 
@@ -42,7 +44,6 @@ function DashboardPage() {
   const { profile, setProfile } = useProfileStore()
 
   const navigate = useNavigate()
-  const { setCandidate } = useInterviewStore()
 
   const user = useUser().user
 
@@ -106,18 +107,6 @@ function DashboardPage() {
     return "Good Night";
   };
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    setCandidate({
-      id: user?.id || null,
-      email: user?.primaryEmailAddress?.emailAddress || null,
-      name: user?.username || null,
-      yearsOfExperience: values.yearsOfExperience,
-      jobRole: values.jobRole,
-      skills: values.skills
-    })
-    navigate(`/interview/${Date.now()}`)
-  }
-
   if (isPending) {
     return <div className="h-full w-screen overflow-x-hidden py-12">
       <div className="w-1/2 mx-auto my-2 py-2 rounded-xl bg-gradient-to-r to-blue-700 from-purple-800 dark:to-blue-700 dark:from-purple-800 flex justify-center items-center">
@@ -134,20 +123,32 @@ function DashboardPage() {
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {roles.map((role, index) => (
-            <Card
+            <SessionInfoForm
               key={index}
-              className="dark:bg-zinc-800 dark:text-neutral-300 p-6 cursor-pointer transition duration-300 shadow-md hover:scale-[103%] hover:shadow-lg bg-white hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
-              onClick={() => onSubmit({ yearsOfExperience: 0, jobRole: role.title as JobRoleType, skills: [...role.skills] as [string, ...string[]] })}
+              skills={role.skills}
+              jobRole={role.jobRole}
             >
-              <CardHeader className="py-1 px-0">
-                <CardTitle className="text-2xl font-medium">{role.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <p className="text-gray-600 dark:text-gray-400 text-sm">{role.description}</p>
+              <Card
+                className="dark:bg-zinc-800 dark:text-neutral-300 p-6 cursor-pointer transition duration-300 shadow-md hover:scale-[103%] hover:shadow-lg bg-white hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
+              >
+                <CardHeader className="py-1 px-0">
+                  <CardTitle className="text-2xl font-medium">{role.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm">{role.description}</p>
+                </CardContent>
+              </Card>
+            </SessionInfoForm>
+          ))}
+          <SessionInfoForm>
+            <Card
+              className="dark:bg-zinc-800 dark:text-neutral-300 py-10 flex items-center justify-center cursor-pointer transition duration-300 hover:scale-[103%] shadow-md hover:shadow-lg hover:bg-neutral-100 dark:hover:bg-zinc-700/70"
+            >
+              <CardContent className="flex p-0 items-center justify-center h-full">
+                <Plus size={32} className="text-neutral-300" />
               </CardContent>
             </Card>
-          ))}
-          <SessionInfoForm />
+          </SessionInfoForm>
         </div>
 
         <h1 className="text-3xl font-bold mb-4 mt-16 rounded-xl py-1 h-15 w-fit text-left transition duration-300">
