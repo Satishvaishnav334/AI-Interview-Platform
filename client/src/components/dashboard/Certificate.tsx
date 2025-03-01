@@ -8,10 +8,11 @@ type CertificateProps = {
   name: string;
   role: string;
   score: number;
+  id: string;
   greeting?: string;
 };
 
-const Certificate: React.FC<CertificateProps> = ({ name, role, score, greeting = "Congratulations on your achievement!" }) => {
+const Certificate: React.FC<CertificateProps> = ({ name, role, score, id, greeting = "Congratulations on your achievement!" }) => {
   const certificateRef = useRef<HTMLDivElement>(null);
 
   const downloadPDF = () => {
@@ -26,7 +27,7 @@ const Certificate: React.FC<CertificateProps> = ({ name, role, score, greeting =
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className="relative flex flex-col items-center justify-center p-4">
 
       <div
         ref={certificateRef}
@@ -63,6 +64,9 @@ const Certificate: React.FC<CertificateProps> = ({ name, role, score, greeting =
               </p>
             </div>
           </div>
+        </div>
+        <div className="absolute top-6 right-6">
+          <p className="text-sm text-gray-500">ID: {id}</p>
         </div>
       </div>
 

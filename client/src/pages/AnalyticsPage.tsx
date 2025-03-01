@@ -96,7 +96,13 @@ const AnalyticsPage: React.FC = () => {
         :
         <>
           <AnalysisComponent analyticsData={analyticsData} />
-          <Certificate name={user?.fullName || "Not found"} role={"Mern stack"} score={getAverageScore() * 10} />
+          {id ?
+            <Certificate id={id} name={user?.fullName || "Not found"} role={"Mern stack"} score={getAverageScore() * 10} />
+            :
+            <div className="w-full h-96 flex justify-center items-center">
+              <span>Certificate not found</span>
+            </div>
+          }
         </>}
     </div>
   );
