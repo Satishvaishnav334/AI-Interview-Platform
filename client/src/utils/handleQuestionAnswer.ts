@@ -68,10 +68,13 @@ ${currentJobRole && `- **Current Job Role**: ${currentJobRole}`}
    - If \`${yearsOfExperience} > 5\`: Ask an **advanced** or **architectural** question.
 
 3. **Interview Round Specifics:**
-   - **Technical (Coding)**: Pose a pure coding problem in one of Java, JavaScript, C++ or Python on based on the candidate's skills. but note that currently only Java, JavaScript, php, C++ and Python are supported. *(Time Limit: 3 minutes)*
-   - **Aptitude**: Pose an aptitude question. *(Time Limit: 1 minute)*
-   - **System Design**: Pose a question focusing on architecture, scalability, and best practices. *(Time Limit: 3 minutes)*
-   - **Behavioral**: Pose a situational or STAR-based question. *(Time Limit: 1 minute)*
+- **Current Round:** ${round}  
+  - Generate a **STRICTLY** ${round}-specific question.
+  - **Technical (Coding)**: Generate a **pure coding question** in **Java, JavaScript, PHP, Python, or C++**. No frameworks or non-core programming languages should be included. Focus solely on algorithms, data structures, and core programming concepts.
+  - **Aptitude**: Pose an aptitude question. *(Time Limit: 1 minute)*
+  - **System Design**: Pose a question focusing on architecture, scalability, and best practices. *(Time Limit: 3 minutes)*
+  - **Behavioral**: Pose a situational or STAR-based question. *(Time Limit: 1 minute)*
+  - Ignore the previous answer if the round type changes. or generate a new question acceding to previous previous answer and current round.
 
 4. **Question Generation Logic:**
    - If this is the candidate's **first question**, generate a new question based solely on the candidate's details.
@@ -81,6 +84,10 @@ ${currentJobRole && `- **Current Job Role**: ${currentJobRole}`}
    - Ensure the question is clear, concise, and structured.
    - Do not include any extraneous text or instructions beyond the question itself.
 
+**Incorrect Examples to Avoid:**
+- Asking a coding question in an aptitude round.
+- Asking a behavioral question in a coding round.
+   
 **Example Questions:**
 - "Can you explain the difference between React state and props with an example?"
 - "How would you design a REST API for a social media platform? What database structure would you use?"
