@@ -117,7 +117,7 @@ const getAllSessions = async (req: Request, res: Response) => {
 };
 
 // API to fetch interview data after completion
-const getSessionData = async (req: Request, res: Response) => {
+const getSessionDataBySocketId = async (req: Request, res: Response) => {
   const { socketId } = req.params;
 
   if (!socketId) {
@@ -137,11 +137,32 @@ const getSessionData = async (req: Request, res: Response) => {
   });
 };
 
+const getSessionData = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ error: "Object id is required" });
+  }
+
+  const response = await SessionModel.findById(id);
+
+  if (!response) {
+    res.status(404).json({ error: "Interview data not found" });
+    return;
+  }
+
+  res.status(200).json({
+    success: true,
+    response,
+  });
+};
+
 export {
   createSession,
   updateSession,
   deleteSession,
   getSession,
   getSessionData,
+  getSessionDataBySocketId,
   getAllSessions,
 };

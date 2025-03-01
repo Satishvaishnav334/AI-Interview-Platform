@@ -76,6 +76,10 @@ const router = createBrowserRouter([
             path: ":id/feedback",
             element: <AnalyticsPage />,
           },
+          {
+            path: "sessions/:id",
+            element: <AnalyticsPage />,
+          },
         ]
       },
       // auth routes

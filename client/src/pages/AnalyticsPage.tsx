@@ -2,7 +2,7 @@ import AnalysisComponent from "@/pages/Analysis";
 import React, { useEffect, useState } from "react";
 import Certificate from "../components/dashboard/Certificate";
 import { useUser } from "@clerk/clerk-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import axios from "axios";
 import { InterviewSessionData } from "@/types/InterviewData";
@@ -12,6 +12,7 @@ import { IoMdArrowBack } from "react-icons/io";
 const AnalyticsPage: React.FC = () => {
 
   const { id } = useParams();
+  const location = useLocation()
   const navigate = useNavigate()
   const user = useUser().user
 
@@ -35,7 +36,7 @@ const AnalyticsPage: React.FC = () => {
 
       if (!id) {
         toast({
-          title: "Socket id not found",
+          title: location.pathname.includes("feedback") ? "Socket id not found" : "Object id not found",
           variant: "destructive"
         })
         navigate("/dashboard")
@@ -43,11 +44,20 @@ const AnalyticsPage: React.FC = () => {
       }
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/data/${id}`, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        let res;
+        if (location.pathname.includes("feedback")) {
+          res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/data/${id}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        } else {
+          res = await axios.get(`${import.meta.env.VITE_SERVER_URI}/api/v1/sessions/history/${id}`, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+        }
 
         if (res.status !== 200) {
           toast({

@@ -182,8 +182,8 @@ function DashboardPage() {
               </tr>
             </thead>
             <tbody className="bg-zinc-200/70 dark:bg-zinc-800/70 divide-y divide-gray-200 dark:divide-gray-800">
-              {interviewSessions && interviewSessions.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-100/80 dark:hover:bg-zinc-900">
+              {interviewSessions && interviewSessions.sort((a, b) => new Date(b.endTime).getTime() - new Date(a.endTime).getTime()).map((item) => (
+                <tr onClick={() => navigate(`/interview/sessions/${item._id}`)} key={item._id} className="hover:bg-gray-100/80 dark:hover:bg-zinc-900">
                   <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
                     {item.jobRole}
                   </td>
