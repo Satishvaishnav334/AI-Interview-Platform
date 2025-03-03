@@ -215,7 +215,7 @@ function DashboardPage() {
           Daily stats
         </h1>
         <div className="flex justify-between">
-          <DataVisualization />
+          {interviewSessions && <DataVisualization analysis={interviewSessions} />}
           {(interviewSessions && interviewSessions.length) ? <StreakTracker interviewSessions={interviewSessions} /> : <div className="space-y-2 pt-4">
             <div className="w-7/12 max-w-sm mx-auto p-4 text-center bg-zinc-200 dark:bg-zinc-800 ml-2"></div>
           </div>
