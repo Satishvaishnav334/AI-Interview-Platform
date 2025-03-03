@@ -1,6 +1,5 @@
 import { FaceExpression, InterviewSessionData } from "@/types/InterviewData";
 import { FaUser, FaPhone, FaLinkedin, FaGraduationCap, FaBriefcase, FaGithub } from "react-icons/fa";
-import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, Line, LineChart, XAxis, YAxis } from "recharts"
 import {
   Accordion,
@@ -12,7 +11,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -53,6 +51,27 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
       level: score
     }
   ))
+  
+  type FaceExpressionEntry = {
+    expressionState: string;
+    timeRange: [number, number];
+  };
+  
+  const faceExpressionsArrayDirect: FaceExpressionEntry[] | undefined = analyticsData?.questions.reduce(
+    (agg: FaceExpressionEntry[], { faceExpressions }) => {
+      faceExpressions.forEach(({ expressionState, timeStamp }) => {
+        const existingEntry = agg.find(entry => entry.expressionState === expressionState);
+        if (existingEntry) {
+          existingEntry.timeRange[0] = Math.min(existingEntry.timeRange[0], timeStamp);
+          existingEntry.timeRange[1] = Math.max(existingEntry.timeRange[1], timeStamp);
+        } else {
+          agg.push({ expressionState, timeRange: [timeStamp, timeStamp] });
+        }
+      });
+      return agg;
+    },
+    []
+  );  
 
   const timeSpentPerRound = analyticsData?.questions.reduce((acc, { startTime, endTime, round }) => {
     const duration = endTime ? endTime - startTime : Date.now() - startTime;
@@ -190,14 +209,6 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
               </BarChart>
             </ChartContainer>
           </CardContent>
-          <CardFooter className="flex-col items-start gap-2 text-sm">
-            <div className="flex gap-2 font-medium leading-none">
-              Your skills are trending up! <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="leading-none text-muted-foreground">
-              Keep honing those skills and continue your journey of improvement.
-            </div>
-          </CardFooter>
         </Card>
 
         {/* Skills Bar Chart */}
@@ -211,15 +222,15 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
               config={chartConfig}
               className="mx-auto aspect-square max-h-[250px]"
             >
-              <RadarChart data={skillLevel}>
+              <RadarChart data={faceExpressionsArrayDirect}>
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent hideLabel />}
                 />
                 <PolarGrid gridType="circle" />
-                <PolarAngleAxis dataKey="month" />
+                <PolarAngleAxis dataKey="expressionState" />
                 <Radar
-                  dataKey="level"
+                  dataKey="timeRange"
                   fill="var(--color-level)"
                   fillOpacity={0.6}
                   dot={{
@@ -230,19 +241,11 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
               </RadarChart>
             </ChartContainer>
           </CardContent>
-          <CardFooter className="flex-col items-start gap-2 text-sm">
-            <div className="flex gap-2 font-medium leading-none">
-              Your skills are trending up! <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="leading-none text-muted-foreground">
-              Keep honing those skills and continue your journey of improvement.
-            </div>
-          </CardFooter>
         </Card>
 
         <Card className="bg-transparent">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-semibold text-gray-800">
+            <CardTitle className="text-lg font-semibold dark:text-gray-200 text-gray-800">
               Interview Performance Over Time
             </CardTitle>
             <CardDescription className="text-gray-500">
@@ -295,15 +298,6 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
               </LineChart>
             </ChartContainer>
           </CardContent>
-
-          <CardFooter className="flex flex-col items-start gap-2 text-sm text-gray-600">
-            <div className="flex items-center gap-2 font-medium text-green-600">
-              Trending up by 5.2% this month <TrendingUp className="h-4 w-4 text-green-600" />
-            </div>
-            <div className="text-gray-500">
-              Showing total interview performance over the last 6 months.
-            </div>
-          </CardFooter>
         </Card>
 
         {expressions && <TimelineChart expressions={expressions} />}
