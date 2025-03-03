@@ -30,6 +30,11 @@ const sessionSchema = new mongoose.Schema({
         round: String,
         answerReview: String,
         score: Number,
+        code: {
+          type: [{ code: String, language: String }],
+          default: null,
+          required: false,
+        },
         correctAnswer: String,
         startTime: Number,
         endTime: Number,
