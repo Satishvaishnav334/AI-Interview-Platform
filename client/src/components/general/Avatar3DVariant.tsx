@@ -66,10 +66,10 @@ export default function ModelViewer({ text }: { text: string }) {
   }, [text, spokenText, speak]);
   return (
     <div
-      className="relative bg-gray-800 overflow-hidden"
+      className="relative bg-[url('/AvatarBG.jpeg')] bg-cover bg-center h-screen overflow-hidden"
       style={{ width: "30rem", height: "30rem" }}
     >
-      <div style={{ width: "30rem", height: "95rem" }}>
+      <div style={{ width: "30rem", height: "85rem" }}>
         <Canvas camera={{ position: [0, 3, 8], fov: 62 }}>
           <ambientLight intensity={2} />
           <directionalLight position={[0, -3, 5]} intensity={1} />
@@ -77,6 +77,7 @@ export default function ModelViewer({ text }: { text: string }) {
           <OrbitControls enableZoom={false} enableRotate={false} enablePan={false} />
         </Canvas>
       </div>
+      <img src="/AvatarDesk.jpg" alt="avatar" className="absolute object-cover bottom-0 right-0" />
     </div>
   );
 }

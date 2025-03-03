@@ -92,7 +92,7 @@ function Webcam({ questionAnswerIndex, videoWidth, videoHeight, height, width }:
     if (!videoRef.current) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: videoHeight, height: videoWidth }
+        video: { width: videoWidth, height: videoHeight }
       });
       videoRef.current.srcObject = stream;
     } catch (err) {
@@ -215,7 +215,7 @@ function Webcam({ questionAnswerIndex, videoWidth, videoHeight, height, width }:
   }, [location.pathname, questionAnswerIndex, socket]);
 
   return (
-    <div className="bg-gray-900" style={{ position: "relative" }}>
+    <div className="bg-transparent" style={{ position: "relative" }}>
       {location.pathname.includes("/interview") && (
         <>
           <video
