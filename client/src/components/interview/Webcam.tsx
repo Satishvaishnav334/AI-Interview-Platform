@@ -128,7 +128,7 @@ function Webcam({ questionAnswerIndex, videoWidth, videoHeight, height, width }:
       matchDimensions(canvas, displaySize);
 
       let lastDetectionTime = 0;
-      const detectionInterval = 3000; // milliseconds
+      const detectionInterval = 300; // milliseconds
 
       const processVideoFrame = async () => {
         const now = performance.now();

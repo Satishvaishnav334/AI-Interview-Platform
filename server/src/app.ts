@@ -96,9 +96,13 @@ function processFaceData(dataPoints: FaceExpression[]) {
 
   // Initialize the segments object for desired expression types
   const segments: { [key: string]: any[] } = {
-    sad: [],
-    neutral: [],
+    nervous: [],
+    anxious: [],
+    frustrated: [],
+    confident: [],
     excited: [],
+    sad: [],
+    neutral: []
   };
 
   // Start with the first data point

@@ -41,6 +41,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+const chartConfigForRadar = {
+  percentage: {
+    label: "percentage",
+    color: "hsl(var(--chart-1))",
+  },
+  expressionState: {
+    color: "hsl(var(--background))",
+  },
+} satisfies ChartConfig
+
 const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
 
   const { profile } = useProfileStore()
@@ -51,27 +61,25 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
       level: score
     }
   ))
-  
-  type FaceExpressionEntry = {
-    expressionState: string;
-    timeRange: [number, number];
-  };
-  
-  const faceExpressionsArrayDirect: FaceExpressionEntry[] | undefined = analyticsData?.questions.reduce(
-    (agg: FaceExpressionEntry[], { faceExpressions }) => {
-      faceExpressions.forEach(({ expressionState, timeStamp }) => {
-        const existingEntry = agg.find(entry => entry.expressionState === expressionState);
-        if (existingEntry) {
-          existingEntry.timeRange[0] = Math.min(existingEntry.timeRange[0], timeStamp);
-          existingEntry.timeRange[1] = Math.max(existingEntry.timeRange[1], timeStamp);
-        } else {
-          agg.push({ expressionState, timeRange: [timeStamp, timeStamp] });
-        }
+
+  const faceExpressionPercentages = (() => {
+    if (!analyticsData?.questions) return [];
+
+    const expressionCount: Record<string, number> = {};
+    let totalExpressions = 0;
+
+    analyticsData.questions.forEach(({ faceExpressions }) => {
+      faceExpressions.forEach(({ expressionState }) => {
+        expressionCount[expressionState] = (expressionCount[expressionState] || 0) + 1;
+        totalExpressions++;
       });
-      return agg;
-    },
-    []
-  );  
+    });
+
+    return Object.entries(expressionCount).map(([expressionState, count]) => ({
+      expressionState,
+      percentage: ((count / totalExpressions) * 100).toFixed(2), // Rounded to 2 decimal places
+    }));
+  })();
 
   const timeSpentPerRound = analyticsData?.questions.reduce((acc, { startTime, endTime, round }) => {
     const duration = endTime ? endTime - startTime : Date.now() - startTime;
@@ -211,7 +219,7 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
           </CardContent>
         </Card>
 
-        {/* Skills Bar Chart */}
+        {/* Expressions Radar Chart */}
         <Card className="bg-transparent">
           <CardHeader>
             <CardTitle>Expression Analysis</CardTitle>
@@ -219,10 +227,10 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
           </CardHeader>
           <CardContent>
             <ChartContainer
-              config={chartConfig}
+              config={chartConfigForRadar}
               className="mx-auto aspect-square max-h-[250px]"
             >
-              <RadarChart data={faceExpressionsArrayDirect}>
+              <RadarChart data={faceExpressionPercentages}>
                 <ChartTooltip
                   cursor={false}
                   content={<ChartTooltipContent hideLabel />}
@@ -230,7 +238,7 @@ const AnalysisComponent = ({ analyticsData }: AnalysisComponentProps) => {
                 <PolarGrid gridType="circle" />
                 <PolarAngleAxis dataKey="expressionState" />
                 <Radar
-                  dataKey="timeRange"
+                  dataKey="percentage"
                   fill="var(--color-level)"
                   fillOpacity={0.6}
                   dot={{
